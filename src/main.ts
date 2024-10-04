@@ -1,5 +1,5 @@
 import { Plugin } from 'obsidian';
-import ChronicleView, { VIEW_TYPE } from 'tests/chronicle_view';
+import ChronicleView, { VIEW_TYPE } from './chronicle_view';
 
 export default class ChroniclePlugin extends Plugin {
 
