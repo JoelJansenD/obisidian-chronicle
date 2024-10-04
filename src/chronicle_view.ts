@@ -1,4 +1,7 @@
-import { IconName, ItemView, WorkspaceLeaf } from 'obsidian';
+import { ItemView, WorkspaceLeaf } from 'obsidian';
+import Calendar from '@event-calendar/core';
+import TimeGrid from '@event-calendar/time-grid';
+import '@event-calendar/core/index.css';
 
 export const VIEW_TYPE = 'chronicle-view';
 
@@ -25,7 +28,19 @@ export default class ChronicleView extends ItemView {
         const container = this.containerEl.children[1];
         container.empty();
         const content = document.createElement('div');
-        content.textContent = 'Content biatch';
+
+        const calendar = new Calendar({
+            target: content,
+            props: {
+                plugins: [ TimeGrid ],
+                options: {
+                    view: 'timeGridWeek',
+                    events: [],
+                    locale: 'nl'
+                }
+            }
+        });
+
         container.appendChild(content);
     }
 
