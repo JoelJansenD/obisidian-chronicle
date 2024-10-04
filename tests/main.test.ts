@@ -1,7 +1,7 @@
 import ChroniclePlugin from '@src/main';
 
 describe('active-leaf-change event', () => {
-    test('', () => {
+    test('1+1', () => {
         const a = 1 + 1;
         expect(a).toBe(2);
     })
