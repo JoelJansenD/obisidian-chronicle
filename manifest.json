@@ -1,11 +1,9 @@
 {
-	"id": "Obsidian Chronicle",
-	"name": "Sample Plugin",
+	"id": "obsidian-chronicle",
+	"name": "Obsidian Chronicle",
 	"version": "0.0.1-alpha",
 	"minAppVersion": "0.15.0",
 	"description": "Your personal agenda, task manager, and timeline—right inside Obsidian.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"author": "JoelJansenD",
 	"isDesktopOnly": false
 }
