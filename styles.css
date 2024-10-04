@@ -700,3 +700,25 @@
 .ec-time-grid .ec-body:not(.ec-compact) .ec-line:nth-child(even):after{
     border-color:transparent;
 }
+
+.cv-day {
+    display: flex;
+    flex-direction: column;
+    margin: 0px;
+    margin-bottom: 8px;
+}
+
+.cv-day span:first-child {
+    font-size: 12px;
+}
+
+.cv-day span:not(first-child) {
+    font-size: 32px;
+}
+
+@media (max-width: 768px) {
+
+    .cv-day span:not(first-child) {
+        font-size: 20px;
+    }
+}

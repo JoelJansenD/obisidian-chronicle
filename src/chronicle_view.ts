@@ -25,39 +25,42 @@ export default class ChronicleView extends ItemView {
     }
 
     async onOpen() {
-        const container = this.containerEl.children[1];
-        container.empty();
-        const content = document.createElement('div');
+        requestAnimationFrame(() => {
+            const container = this.containerEl.children[1];
+            container.empty();
+            const content = document.createElement('div');
+            const width = this.containerEl.offsetWidth;
 
-        const calendar = new Calendar({
-            target: content,
-            props: {
-                plugins: [ TimeGrid ],
-                options: {
-                    allDayContent: { html: '' },
-                    dayHeaderFormat: this.formatHeader,
-                    events: [],
-                    locale: 'nl',
-                    nowIndicator: true,
-                    slotLabelFormat: { hour: '2-digit', minute: '2-digit' },
-                    titleFormat: d => {
-                        const month = d.toLocaleDateString('nl', { month: 'long' });
-                        return `${month[0].toUpperCase()}${month.substring(1)}`
-                    },
-                    view: 'timeGridWeek',
+            const calendar = new Calendar({
+                target: content,
+                props: {
+                    plugins: [ TimeGrid ],
+                    options: {
+                        allDayContent: { html: '' },
+                        dayHeaderFormat: d => this.formatHeader(d, width),
+                        events: [],
+                        locale: 'nl',
+                        nowIndicator: true,
+                        slotLabelFormat: { hour: '2-digit', minute: '2-digit' },
+                        titleFormat: d => {
+                            const month = d.toLocaleDateString('nl', { month: 'long' });
+                            return `${month[0].toUpperCase()}${month.substring(1)}`
+                        },
+                        view: 'timeGridWeek',
+                    }
                 }
-            }
-        });
+            });
 
-        container.appendChild(content);
+            container.appendChild(content);
+        });
     }
 
-    private formatHeader(date: Date) {
+    private formatHeader(date: Date, width: number) {
         const dayAbb = date.toLocaleDateString('nl', { weekday: 'long' });
         return {
-            html: `<div style="display: flex;flex-direction: column;margin:0px 0px 8px 0px;">
-                       <span style="font-size: 12px;">${dayAbb[0].toUpperCase()}${dayAbb.substring(1)}</span>
-                       <span style="font-size: 32px;">${date.getDate()}</span>
+            html: `<div class='cv-day'>
+                       <span>${dayAbb[0].toUpperCase()}${(width > 768 ? dayAbb.substring(1) : '')}</span>
+                       <span>${date.getDate()}</span>
                    </div>`
         };
     }
