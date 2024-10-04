@@ -1,30 +1,36 @@
 import { Plugin } from 'obsidian';
+import ChronicleView, { VIEW_TYPE } from 'tests/chronicle_view';
 
 export default class ChroniclePlugin extends Plugin {
 
-    statusBarTextElement: HTMLSpanElement;
-
-    onload() {
-        this.statusBarTextElement = this.addStatusBarItem().createEl('span');
-
-        this.app.workspace.on('active-leaf-change', async () => {
-            const file = this.app.workspace.getActiveFile();
-            if(file) {
-                const content = await this.app.vault.read(file);
-                this.statusBarTextElement.textContent = `You've got ${this.getLineCount(content)} lines`;
+    async onload() {
+        this.registerView(VIEW_TYPE, leaf => new ChronicleView(leaf));
+        
+        this.addRibbonIcon(
+            'calendar',
+            'Open chronicle',
+            async () => {
+                await this.activateView();
             }
-        })
-
-        this.app.workspace.on('editor-change', editor => {
-            const document = editor.getDoc().getValue();
-            this.statusBarTextElement.textContent = `You've got ${this.getLineCount(document)} lines`;
-        });
+        );
     }
 
-    private getLineCount(fileContent?: string) {
-        return fileContent
-            ? fileContent.split(/\r\n|\r|\n/).length
-            : 0;
+    async activateView() {
+        const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE);
+        if(leaves.length === 0) {
+            const leaf = this.app.workspace.getLeaf(false);
+            await leaf.setViewState({
+                type: VIEW_TYPE,
+                active: true
+            });
+        }
+        else {
+            this.app.workspace.revealLeaf(leaves[0]);
+        }
+    }
+
+    onunload() {
+        this.app.workspace.detachLeavesOfType(VIEW_TYPE);
     }
 
 };
