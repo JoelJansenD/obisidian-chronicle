@@ -1,6 +1,7 @@
 import { ItemView, WorkspaceLeaf } from 'obsidian';
 import Calendar from '@event-calendar/core';
 import TimeGrid from '@event-calendar/time-grid';
+import Interaction from '@event-calendar/interaction';
 import '@event-calendar/core/index.css';
 
 export const VIEW_TYPE = 'chronicle-view';
@@ -34,10 +35,16 @@ export default class ChronicleView extends ItemView {
             const calendar = new Calendar({
                 target: content,
                 props: {
-                    plugins: [ TimeGrid ],
+                    plugins: [ TimeGrid, Interaction ],
                     options: {
                         allDayContent: { html: '' },
                         dayHeaderFormat: d => this.formatHeader(d, width),
+                        dateClick: info => {
+                            console.log(info)
+                        },
+                        eventDragStart: info => {
+                            console.log(info)
+                        },
                         events: [],
                         locale: 'nl',
                         nowIndicator: true,

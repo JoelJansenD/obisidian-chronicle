@@ -14,9 +14,11 @@
 	"license": "MIT",
 	"devDependencies": {
 		"@event-calendar/core": "3.6.1",
+		"@event-calendar/interaction": "3.6.1",
 		"@event-calendar/time-grid": "3.6.1",
-		"@types/event-calendar__core": "^3.4.2",
-		"@types/event-calendar__time-grid": "^3.4.0",
+		"@types/event-calendar__core": "3.4.2",
+		"@types/event-calendar__interaction": "3.4.0",
+		"@types/event-calendar__time-grid": "3.4.0",
 		"@types/jest": "29.5.13",
 		"@types/node": "16.18.112",
 		"@typescript-eslint/eslint-plugin": "5.29.0",
