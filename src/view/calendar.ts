@@ -45,6 +45,9 @@ export function renderCalendar(containerEl: HTMLElement, eventSources: EventSour
     const modifyEvent =
         settings.modifyEvent &&
         (async ({ event, oldEvent, revert }: ModifyEventParameters) => ((await settings.modifyEvent!(event, oldEvent)) || revert()));
+        
+    const createDate = (date: {year: number, month: number, day: number, hour: number, minute: number, second: number}) => 
+        new Date(date.year,date.month,date.day,date.hour,date.minute,date.second);
 
     const cal = new Calendar(containerEl, {
         plugins: [
@@ -66,12 +69,22 @@ export function renderCalendar(containerEl: HTMLElement, eventSources: EventSour
             right: "dayGridMonth,timeGridWeek,timeGridDay",
         },
 
+        titleFormat: (dateArg) => {
+            const startDate = createDate(dateArg.start);
+            if(dateArg.end) {
+                const endDate = createDate(dateArg.end);
+                return `${startDate.toLocaleDateString('nl-NL')} - ${endDate.toLocaleDateString('nl-NL')}`;
+            }
+            return startDate.toLocaleDateString('nl-NL');
+        },
+
         views: {
             dayGridMonth: {
                 type: 'dayGrid',
                 buttonText: 'Month'
             },
             timeGridDay: {
+                titleFormat: (dateArg) => createDate(dateArg.start).toLocaleDateString('nl-NL'),
                 type: "timeGrid",
                 duration: { days: 1 },
                 buttonText: "Day",
