@@ -1,5 +1,5 @@
 import { DateSelectArg } from "@fullcalendar/core";
-import { App, Modal, setIcon } from "obsidian";
+import { App, IconName, Modal, setIcon } from "obsidian";
 
 export type NewTaskModalInput = {
     start: Date,
@@ -17,30 +17,29 @@ export default class NewTaskModal extends Modal {
 
     onOpen(): void {
         const { contentEl } = this;
-        contentEl.createEl('h1', { text: 'Add new Event' });
+        const container = contentEl.createDiv({ cls: 'oc__modal__container' });
+        this.createFormRow(container, null, 'input', { type: 'text', placeholder: 'Add new event', cls: 'oc__modal__item--header' });
+        this.createFormRow(container, 'hourglass', 'span', { text: this.formatStartEndString(this._input.start, this._input.end) });
 
-        const eventNameRow = this.createFormRow();
-        eventNameRow.createSpan({ text: 'Name' });
-        eventNameRow.createEl('input', { type: 'text' });
-
-        const dateTimeRow = this.createFormRow();
-        const clockIcon = dateTimeRow.createDiv();
-        setIcon(clockIcon, 'hourglass');
-        dateTimeRow.createEl('span', { text: this.formatStartEndString(this._input.start, this._input.end) });
-
-        const actionContainer = this.createFormRow();
-        const cancelButton = actionContainer.createEl('button', { text: 'Cancel' });
-        cancelButton.addEventListener('click', () => this.close());
-        const saveButton = actionContainer.createEl('button', { text: 'Save' });
-        saveButton.addEventListener('click', () => this.close());
+        const actionRow = this.createFormRow(container, null, 'div', { cls: 'oc__modal__item--actions' });
+        const actionContent = actionRow.contentEl;
+        const cancelButton = actionContent.createEl('button', { text: 'Cancel', cls: 'oc__button oc__button--secondary' });
+        const saveButton = actionContent.createEl('button', { text: 'Save', cls: 'oc__button oc__button--primary' });
     }
 
     onClose(): void {
         this.contentEl.empty();
     }
 
-    private createFormRow() {
-        return this.contentEl.createDiv({ cls: 'oc__modal__row' });
+    private createFormRow<K extends keyof HTMLElementTagNameMap>(container: HTMLDivElement, icon: IconName | null, tag: K, o?: DomElementInfo) {
+        let iconEl: HTMLDivElement | null = null;
+
+        if(icon) {
+            iconEl = container.createDiv({ cls: 'oc__modal__item oc__modal__item--icon' });
+            setIcon(iconEl, icon);
+        }
+        const contentEl = container.createEl(tag, o ? {...o, cls: `oc__modal__item oc__modal__item--content ${o.cls}` } : { cls: 'oc__modal__item oc__modal__item--content' });
+        return {iconEl, contentEl};
     }
 
     private formatStartEndString(start: Date, end: Date) {

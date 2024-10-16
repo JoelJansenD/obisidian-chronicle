@@ -71,12 +71,72 @@ table.fc-scrollgrid, table.fc-scrollgrid th {
 
 .oc__modal__container {
   width: 100%;
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: min-content auto;
+  gap: 16px 8px;
+}
+
+.oc__modal__item {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+}
+
+.oc__modal__item--icon {
+  width: fit-content;
+  grid-column-start: 1;
+  grid-column-end: span 1;
+}
+
+.oc__modal__item--content {
+  grid-column-start: 2;
+  grid-column-end: span 1;
+}
+
+.oc__modal__item--header {
+  height: 48px !important;
+  font-size: 32px !important;
+}
+
+.oc__modal__item--actions {
+  display: flex;
+  justify-content: end;
+}
+
+.oc__modal__item--actions button {
+  margin-left: 8px;
 }
 
 .oc__modal__row {
   width: 100%;
   display: flex;
   justify-content: flex-start;
+}
+
+.oc__button {
+  padding: 16px 30px;
+  box-shadow: none !important;
+}
+
+.oc__button:hover {
+  padding: 16px 30px;
+  cursor: pointer;
+}
+
+.oc__button--primary {
+  background: rebeccapurple !important;
+}
+
+.oc__button--primary:hover {
+  background: rgb(80, 39, 121) !important;
+  
+}
+
+.oc__button--secondary {
+  background: none !important;
+}
+
+.oc__button--secondary:hover {
+  background: rgba(255, 255, 255, 0.048) !important;
+  box-shadow: none !important;
 }
