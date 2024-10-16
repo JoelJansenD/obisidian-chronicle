@@ -45,7 +45,7 @@ export default class ObsidianChronicleView extends ItemView {
         };
         args.view.calendar.addEvent(event);
 
-        const modal = new NewTaskModal(this.app);
+        const modal = new NewTaskModal(this.app, { start: args.start, end: args.end });
         modal.open();
 
         await this.app.vault.create(`Lorem Ipsum.md`, 'Dolor sit amet');
