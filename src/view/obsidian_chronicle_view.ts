@@ -1,17 +1,15 @@
 import { ItemView, WorkspaceLeaf } from "obsidian";
 import { renderCalendar } from './calendar';
 import { Calendar, DateSelectArg, EventApi, EventClickArg, EventHoveringArg, EventInput } from "@fullcalendar/core";
+import NewTaskModal from "./new_task_modal";
 
 export const CHRONICLE_VIEW_TYPE = 'full-calendar-view';
 export default class ObsidianChronicleView extends ItemView {
 
     private fullCalendar: Calendar | null;
 
-    constructor(
-        leaf: WorkspaceLeaf) {
-        
+    constructor(leaf: WorkspaceLeaf) {
         super(leaf);
-        
     }
 
     // Calendar events
@@ -46,6 +44,11 @@ export default class ObsidianChronicleView extends ItemView {
             allDay: args.allDay
         };
         args.view.calendar.addEvent(event);
+
+        const modal = new NewTaskModal(this.app);
+        modal.open();
+
+        await this.app.vault.create(`Lorem Ipsum.md`, 'Dolor sit amet');
     }
 
     async toggleTask(e: EventApi, isDone: boolean) {
@@ -83,11 +86,12 @@ export default class ObsidianChronicleView extends ItemView {
             initialView: { desktop: 'dayGridWeek',  mobile: 'dayGridWeek' },
 
             // Events
+            // Instead of passing the methods as events, we have to call them to ensure that we still have access to Obsidian's API
             eventClick: this.eventClick,
             eventMouseEnter: this.eventMouseEnter,
             modifyEvent: this.modifyEvent,
             openContextMenuForEvent: this.openContextMenuForEvent,
-            select: this.select,
+            select: args => this.select(args),
             toggleTask: this.toggleTask
         });
 
