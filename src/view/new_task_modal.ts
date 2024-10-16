@@ -1,9 +1,15 @@
 import { DateSelectArg } from "@fullcalendar/core";
 import { App, IconName, Modal, setIcon } from "obsidian";
 
+export type NewTaskModalResult = {
+    title: string;
+}
+
 export type NewTaskModalInput = {
     start: Date,
-    end: Date
+    end: Date,
+    onSaveAsync?: (result: NewTaskModalResult) => Promise<boolean>;
+    onCancelAsync?: () => Promise<boolean>;
 };
 
 export default class NewTaskModal extends Modal {
@@ -18,13 +24,24 @@ export default class NewTaskModal extends Modal {
     onOpen(): void {
         const { contentEl } = this;
         const container = contentEl.createDiv({ cls: 'oc__modal__container' });
-        this.createFormRow(container, null, 'input', { type: 'text', placeholder: 'Add new event', cls: 'oc__modal__item--header' });
+        const eventTitleRow = this.createFormRow(container, null, 'input', { type: 'text', placeholder: 'Add new event', cls: 'oc__modal__item--header' });
         this.createFormRow(container, 'hourglass', 'span', { text: this.formatStartEndString(this._input.start, this._input.end) });
 
         const actionRow = this.createFormRow(container, null, 'div', { cls: 'oc__modal__item--actions' });
         const actionContent = actionRow.contentEl;
         const cancelButton = actionContent.createEl('button', { text: 'Cancel', cls: 'oc__button oc__button--secondary' });
         const saveButton = actionContent.createEl('button', { text: 'Save', cls: 'oc__button oc__button--primary' });
+
+        cancelButton.addEventListener('click', async () => {
+            if(!this._input.onCancelAsync || await this._input.onCancelAsync()) {
+                this.close();
+            }
+        });
+        saveButton.addEventListener('click', async () => {
+            if(!this._input.onSaveAsync || await this._input.onSaveAsync({ title: (eventTitleRow.contentEl as HTMLInputElement).value })) {
+                this.close();
+            }
+        });
     }
 
     onClose(): void {

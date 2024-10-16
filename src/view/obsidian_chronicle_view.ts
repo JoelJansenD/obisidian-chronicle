@@ -37,18 +37,27 @@ export default class ObsidianChronicleView extends ItemView {
     }
 
     async select(args: DateSelectArg) {
-        const event: EventInput = {
-            title: 'Lorem Ipsum',
-            start: args.start,
+        const modal = new NewTaskModal(this.app, { 
+            start: args.start, 
             end: args.end,
-            allDay: args.allDay
-        };
-        args.view.calendar.addEvent(event);
+            onSaveAsync: async (result) => {
+                if(!result.title) {
+                    return false;
+                }
 
-        const modal = new NewTaskModal(this.app, { start: args.start, end: args.end });
+                const event: EventInput = {
+                    title: result.title,
+                    start: args.start,
+                    end: args.end,
+                    allDay: args.allDay
+                };
+                args.view.calendar.addEvent(event);
+                await this.app.vault.create(`${result.title}.md`, '');
+                return true;
+            }
+        });
         modal.open();
 
-        await this.app.vault.create(`Lorem Ipsum.md`, 'Dolor sit amet');
     }
 
     async toggleTask(e: EventApi, isDone: boolean) {
