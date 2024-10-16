@@ -1,12 +1,10 @@
 import { Plugin } from 'obsidian';
-import ChronicleView, { VIEW_TYPE } from './chronicle_view';
+import ObsidianChronicleView, { CHRONICLE_VIEW_TYPE } from './view/obsidian_chronicle_view';
 
 export default class ChroniclePlugin extends Plugin {
 
     async onload() {
-        // this.loadCss('main.css');
-
-        this.registerView(VIEW_TYPE, leaf => new ChronicleView(leaf));
+        this.registerView(CHRONICLE_VIEW_TYPE, leaf => new ObsidianChronicleView(leaf));
         
         this.addRibbonIcon(
             'calendar',
@@ -18,11 +16,11 @@ export default class ChroniclePlugin extends Plugin {
     }
 
     async activateView() {
-        const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE);
+        const leaves = this.app.workspace.getLeavesOfType(CHRONICLE_VIEW_TYPE);
         if(leaves.length === 0) {
             const leaf = this.app.workspace.getLeaf(false);
             await leaf.setViewState({
-                type: VIEW_TYPE,
+                type: CHRONICLE_VIEW_TYPE,
                 active: true
             });
         }
@@ -31,20 +29,12 @@ export default class ChroniclePlugin extends Plugin {
         }
     }
 
-    loadCss(fileName: string) {
-        const linkEl = document.createElement('link');
-        linkEl.rel = 'stylesheet';
-        linkEl.type = 'text/css';
-        linkEl.href = this.getAssetUrl(fileName);
-        document.head.appendChild(linkEl);
-    }
-
     getAssetUrl(name: string) {
         return this.app.vault.adapter.getResourcePath(`${this.manifest.dir}/${name}`);
     }
 
     onunload() {
-        this.app.workspace.detachLeavesOfType(VIEW_TYPE);
+        this.app.workspace.detachLeavesOfType(CHRONICLE_VIEW_TYPE);
     }
 
 };
