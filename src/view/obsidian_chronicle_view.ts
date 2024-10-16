@@ -1,6 +1,6 @@
 import { ItemView, WorkspaceLeaf } from "obsidian";
 import { renderCalendar } from './calendar';
-import { Calendar, EventApi, EventClickArg, EventHoveringArg } from "@fullcalendar/core";
+import { Calendar, DateSelectArg, EventApi, EventClickArg, EventHoveringArg, EventInput } from "@fullcalendar/core";
 
 export const CHRONICLE_VIEW_TYPE = 'full-calendar-view';
 export default class ObsidianChronicleView extends ItemView {
@@ -38,12 +38,14 @@ export default class ObsidianChronicleView extends ItemView {
         console.log(mouseEvent)
     }
 
-    async select(start: Date, end: Date, allDay: boolean, viewType: string) {
-        console.log('select')
-        console.log(start)
-        console.log(end)
-        console.log(allDay)
-        console.log(viewType)
+    async select(args: DateSelectArg) {
+        const event: EventInput = {
+            title: 'Lorem Ipsum',
+            start: args.start,
+            end: args.end,
+            allDay: args.allDay
+        };
+        args.view.calendar.addEvent(event);
     }
 
     async toggleTask(e: EventApi, isDone: boolean) {

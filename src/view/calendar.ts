@@ -63,6 +63,7 @@ export function renderCalendar(containerEl: HTMLElement, eventSources: EventSour
         nowIndicator: true,
         scrollTimeReset: false,
         dayMaxEvents: true,
+        events: [],
 
         headerToolbar: {
             left: "prev,next today",
@@ -84,7 +85,6 @@ export function renderCalendar(containerEl: HTMLElement, eventSources: EventSour
                 <span class='oc-col-header-cell-weekday' style='text-decoration:none;'>${dateArg.date.toLocaleDateString('nl-NL', { weekday: 'short' }).toUpperCase()}</span>
                 <div class='oc-col-header-cell-day'>${dateArg.date.toLocaleDateString('nl-NL', { day: 'numeric' })}</div>
             </div>` }),
-        // dayHeaderFormat: (dateArg) => `<span style='background:red;'>${createDate(dateArg.start).toLocaleDateString('nl-NL', { weekday: 'long' })}</span>`,
 
         views: {
             dayGridMonth: {
@@ -120,9 +120,9 @@ export function renderCalendar(containerEl: HTMLElement, eventSources: EventSour
         selectable: settings.select && true,
         selectMirror: settings.select && true,
         select: settings.select &&
-            (async (info) => {
-                await settings.select!(info.start, info.end, info.allDay, info.view.type);
-                info.view.calendar.unselect();
+            (async (args) => {
+                await settings.select!(args);
+                args.view.calendar.unselect();
             }),
 
         editable: modifyEvent && true,

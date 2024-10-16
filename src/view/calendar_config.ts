@@ -1,13 +1,8 @@
-import { EventApi, EventClickArg, EventHoveringArg } from "@fullcalendar/core";
+import { DateSelectArg, EventApi, EventClickArg, EventHoveringArg } from "@fullcalendar/core";
 
 export default interface CalendarConfig {
     eventClick?: (info: EventClickArg) => void;
-    select?: (
-        startDate: Date,
-        endDate: Date,
-        allDay: boolean,
-        viewType: string
-    ) => Promise<void>;
+    select?: (args: DateSelectArg) => Promise<void>;
     modifyEvent?: (event: EventApi, oldEvent: EventApi) => Promise<boolean>;
     eventMouseEnter?: (info: EventHoveringArg) => void;
     firstDay?: number;
