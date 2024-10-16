@@ -48,6 +48,7 @@ export function renderCalendar(containerEl: HTMLElement, eventSources: EventSour
         
     const createDate = (date: {year: number, month: number, day: number, hour: number, minute: number, second: number}) => 
         new Date(date.year,date.month,date.day,date.hour,date.minute,date.second);
+    const dateIsToday = (date: Date) => date.setHours(0,0,0,0) === new Date().setHours(0,0,0,0);
 
     const cal = new Calendar(containerEl, {
         plugins: [
@@ -78,7 +79,12 @@ export function renderCalendar(containerEl: HTMLElement, eventSources: EventSour
             return startDate.toLocaleDateString('nl-NL');
         },
 
-        dayHeaderFormat: (dateArg) => createDate(dateArg.start).toLocaleDateString('nl-NL', { weekday: 'long' }),
+        dayHeaderContent: (dateArg) => ({ 
+            html: `<div class='oc-col-header-cell ${dateIsToday(dateArg.date) ? 'oc-col-header-cell-active' :  ''}'>
+                <span class='oc-col-header-cell-weekday' style='text-decoration:none;'>${dateArg.date.toLocaleDateString('nl-NL', { weekday: 'short' }).toUpperCase()}</span>
+                <div class='oc-col-header-cell-day'>${dateArg.date.toLocaleDateString('nl-NL', { day: 'numeric' })}</div>
+            </div>` }),
+        // dayHeaderFormat: (dateArg) => `<span style='background:red;'>${createDate(dateArg.start).toLocaleDateString('nl-NL', { weekday: 'long' })}</span>`,
 
         views: {
             dayGridMonth: {

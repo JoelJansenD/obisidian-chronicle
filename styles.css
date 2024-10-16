@@ -1,3 +1,70 @@
+table, thead, body, tr, td, th {
+  border-color: #ffffff4b !important;
+}
+
+table.fc-scrollgrid, table.fc-scrollgrid th {
+  border: 0 !important;
+}
+
+.fc-timegrid-divider.fc-cell-shaded {
+  border: none !important;
+  padding-bottom: 1px !important;
+  background-color: #ffffff4b;
+}
+
 .fc-timegrid-slot-minor, .fc-timegrid-slot-label {
   border: 0 !important;
+}
+
+.fc-col-header-cell-cushion {
+  text-decoration: none;
+}
+
+.fc-col-header-cell-cushion:hover {
+  text-decoration: none;
+  cursor: default;
+}
+
+.oc-col-header-cell {
+  display:flex;
+  flex-direction:column;
+}
+
+.oc-col-header-cell-weekday {
+  color: #dadada;
+  font-size: 12px;
+}
+
+.oc-col-header-cell-day {
+    display: block;
+    height: 1.8em;
+    width: 1.8em;
+    line-height: 1.8em;
+
+    -moz-border-radius: 50%; /* or 50% */
+    border-radius: 50%; /* or 50% */
+
+    color: #dadada;
+    text-align: center;
+    /* font-size: 32px; */
+    font-size: 2em;
+}
+
+.oc-col-header-cell-day:hover {
+    cursor: pointer;
+    background-color: #222222;
+}
+
+.oc-col-header-cell-active .oc-col-header-cell-weekday {
+    color: rgb(154, 78, 230);
+}
+
+.oc-col-header-cell-active .oc-col-header-cell-day {
+    background-color: rgb(154, 78, 230);
+    color: #1e1e1e;
+}
+
+.oc-col-header-cell-active .oc-col-header-cell-day:hover {
+    background-color: rgb(130, 64, 196);
+    color: #1e1e1e;
 }
