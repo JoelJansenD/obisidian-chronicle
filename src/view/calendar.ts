@@ -73,10 +73,12 @@ export function renderCalendar(containerEl: HTMLElement, eventSources: EventSour
             const startDate = createDate(dateArg.start);
             if(dateArg.end) {
                 const endDate = createDate(dateArg.end);
-                return `${startDate.toLocaleDateString('nl-NL')} - ${endDate.toLocaleDateString('nl-NL')}`;
+                return `${startDate.toLocaleDateString('nl-NL')}${dateArg.defaultSeparator}${endDate.toLocaleDateString('nl-NL')}`;
             }
             return startDate.toLocaleDateString('nl-NL');
         },
+
+        dayHeaderFormat: (dateArg) => createDate(dateArg.start).toLocaleDateString('nl-NL', { weekday: 'long' }),
 
         views: {
             dayGridMonth: {
