@@ -1,4 +1,4 @@
-import { App, Modal, Setting } from "obsidian";
+import { App, Modal, Notice, Setting } from "obsidian";
 
 export type NewCalendarSubmission = {
     name: string;
@@ -27,7 +27,20 @@ export default class NewCalendarModal extends Modal {
             .addButton(btn => btn
                 .setButtonText('Add new calendar')
                 .setCta()
-                .onClick(() => onSubmit({ name: this.name, path: this.path, colour: this.colour })));
+                .onClick(() => {
+                    const validationResult = this.validate();
+                    if(validationResult.length > 0) {
+                        // Display all validation errors in a new dialog
+                        const modal = new Modal(app).setContent(validationResult.join('\r\n'));
+                        new Setting(modal.contentEl).addButton(btn => btn.setButtonText('Close').setWarning().onClick(() => modal.close));
+                        modal.open();
+                        return;
+                    }
+
+                    // The result can be submitted once it has passed validation
+                    onSubmit({ name: this.name, path: this.path, colour: this.colour });
+                    this.close();
+                }));
     }
 
     private buildColourPicker() {
@@ -57,5 +70,13 @@ export default class NewCalendarModal extends Modal {
             .addDropdown(comp => comp
                 .addOptions(options)
                 .onChange(val => this.path = val));
+    }
+
+    private validate() {
+        const errors: string[] = [];
+        if(!this.path) {
+            errors.push('You must select a path to store notes');
+        }
+        return errors;
     }
 }
