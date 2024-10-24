@@ -1,6 +1,7 @@
 import ChroniclePlugin from "@src/main";
 import { App, PluginSettingTab, Setting } from "obsidian";
 import { ObsidianChronicleCalendarSetting } from "./obsidian_chronicle_settings";
+import NewCalendarModal, { NewCalendarSubmission } from "./new_calendar_modal";
 
 export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
 
@@ -21,13 +22,18 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
         new Setting(containerEl)
             .setName('Calendars')
             .setDesc('Add calendar')
-            .addDropdown(cb => cb
-                .addOption('1', 'Option 1')
-                .addOption('2', 'Option 2'))
+            // Re-enable the dropdown when multiple calendar implementations are available
+            // .addDropdown(cb => cb
+            //     .addOption('1', 'Option 1')
+            //     .addOption('2', 'Option 2'))
             .addButton(cb => cb
                 .setIcon('plus')
-                .onClick(evt => console.log(evt)));
+                .onClick(_ => new NewCalendarModal(this.app, this.onAddCalendar).open()));
         this._plugin.settings.calendars.forEach(c => this.addCalendarConfigurationRow(c, containerEl)); 
+    }
+
+    private onAddCalendar(result: NewCalendarSubmission) {
+        console.log(result)
     }
 
     private addCalendarConfigurationRow(calendar: ObsidianChronicleCalendarSetting, containerEl: HTMLElement) {
