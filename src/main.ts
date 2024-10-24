@@ -1,6 +1,5 @@
 import { App, Plugin, PluginManifest } from 'obsidian';
 import ObsidianChronicleView, { CHRONICLE_VIEW_TYPE } from './view/obsidian_chronicle_view';
-import ChronicleCache from './cache/chronicle_cache';
 import NoteDataAccess from './data_access/note_data_access';
 import ObsidianChronicleSettings, { DEFAULT_SETTINGS } from './settings/obsidian_chronicle_settings';
 import ObsidianChronicleSettingsTab from './settings/obsidian_chronicle_settings_tab';
@@ -12,10 +11,6 @@ export default class ChroniclePlugin extends Plugin {
         return this._settings;
     }
 
-    private readonly _cache: ChronicleCache;
-    public get cache() {
-        return this._cache;
-    }
     private readonly _noteDataAccess: NoteDataAccess;
     public get noteDataAccess() {
         return this._noteDataAccess;
@@ -23,8 +18,6 @@ export default class ChroniclePlugin extends Plugin {
     
     constructor(app: App, manifest: PluginManifest) {
         super(app, manifest);
-        
-        this._cache = new ChronicleCache();
         this._noteDataAccess = new NoteDataAccess(app);
     }
 
