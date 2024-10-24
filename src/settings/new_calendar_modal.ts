@@ -1,26 +1,21 @@
 import { App, Modal, Notice, Setting } from "obsidian";
-
-export type NewCalendarSubmission = {
-    name: string;
-    path: string;
-    colour: string;
-}
+import { ObsidianChronicleCalendarSetting } from "./obsidian_chronicle_settings";
 
 export default class NewCalendarModal extends Modal {
 
     private readonly _app: App;
 
     private name: string;
-    private path: string;
+    private directory: string;
     private colour: string = '#d2122e';
 
-    constructor(app: App, onSubmit: (result: NewCalendarSubmission) => void) {
+    constructor(app: App, onSubmit: (result: ObsidianChronicleCalendarSetting) => void) {
         super(app);
         this._app = app;
         
         this.setTitle('New Calendar');
         this.buildNameField();
-        this.buildPathSelectorField();
+        this.buildDirectorySelectorField();
         this.buildColourPicker();
 
         new Setting(this.contentEl)
@@ -38,7 +33,7 @@ export default class NewCalendarModal extends Modal {
                     }
 
                     // The result can be submitted once it has passed validation
-                    onSubmit({ name: this.name, path: this.path, colour: this.colour });
+                    onSubmit({ name: this.name, directory: this.directory, colour: this.colour });
                     this.close();
                 }));
     }
@@ -58,7 +53,7 @@ export default class NewCalendarModal extends Modal {
                 .onChange(val => this.name = val));
     }
 
-    private buildPathSelectorField() {
+    private buildDirectorySelectorField() {
         const folders = this._app.vault.getAllFolders();
         const options = {} as Record<string, string>;
         folders.forEach(f => {
@@ -66,16 +61,24 @@ export default class NewCalendarModal extends Modal {
         })
 
         new Setting(this.contentEl)
-            .setName('Path')
-            .addDropdown(comp => comp
-                .addOptions(options)
-                .onChange(val => this.path = val));
+            .setName('Directory')
+            .setDesc('Directory where event notes will be stored')
+            .addDropdown(dropdown => {
+                dropdown
+                    .addOption('', 'Select a directory') // This option will be hidden later, so it serves as a placeholder
+                    .addOptions(options)
+                    .onChange(val => this.directory = val);
+
+                // Hide the placeholder option, telling users that they need to select a value
+                const selectEl = dropdown.selectEl;
+                selectEl.querySelector('option[value=""]')?.setAttrs({ 'disabled': true, 'hidden': true });
+            });
     }
 
     private validate() {
         const errors: string[] = [];
-        if(!this.path) {
-            errors.push('You must select a path to store notes');
+        if(!this.directory) {
+            errors.push('You must select a directory to store notes');
         }
         return errors;
     }

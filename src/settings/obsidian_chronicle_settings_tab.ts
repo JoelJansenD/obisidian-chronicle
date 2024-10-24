@@ -1,7 +1,7 @@
 import ChroniclePlugin from "@src/main";
 import { App, PluginSettingTab, Setting } from "obsidian";
 import { ObsidianChronicleCalendarSetting } from "./obsidian_chronicle_settings";
-import NewCalendarModal, { NewCalendarSubmission } from "./new_calendar_modal";
+import NewCalendarModal from "./new_calendar_modal";
 
 export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
 
@@ -28,12 +28,14 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
             //     .addOption('2', 'Option 2'))
             .addButton(cb => cb
                 .setIcon('plus')
-                .onClick(_ => new NewCalendarModal(this.app, this.onAddCalendar).open()));
+                .onClick(_ => new NewCalendarModal(this.app, r => this.onAddCalendar(r)).open()));
         this._plugin.settings.calendars.forEach(c => this.addCalendarConfigurationRow(c, containerEl)); 
-    }
 
-    private onAddCalendar(result: NewCalendarSubmission) {
-        console.log(result)
+        new Setting(containerEl)
+            .addButton(cb => cb
+                .setButtonText('Save changes')
+                .setCta()
+            )
     }
 
     private addCalendarConfigurationRow(calendar: ObsidianChronicleCalendarSetting, containerEl: HTMLElement) {
@@ -44,6 +46,7 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
         // Delete calendar button
         setting.addButton(comp => comp
             .setIcon('cross')
+            .setWarning()
         );
 
         // Calendar name
@@ -56,6 +59,7 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
         setting.addText(comp => comp
             .setPlaceholder('Note directory')
             .setValue(calendar.directory)
+            .setDisabled(true)
         );
 
         // Calendar event colour
@@ -65,6 +69,11 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
 
         // Remove the info element since it doesn't have any content but takes 40% of the row width
         setting.infoEl.remove();
+    }
+
+    private onAddCalendar(result: ObsidianChronicleCalendarSetting) {
+        this._plugin.settings.calendars.push(result);
+        this.display();
     }
 
 }
