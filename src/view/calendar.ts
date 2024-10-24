@@ -39,7 +39,7 @@ type ModifyEventParameters = {
 }
 
 export function renderCalendar(containerEl: HTMLElement, eventSources: EventSourceInput[], config?: CalendarConfig) : Calendar {
-    const settings = config ?? {};
+    const settings = config ?? {} as CalendarConfig;
     const isMobile = window.innerWidth < MOBILE_WIDTH_CUTOFF_IN_PX;
     
     const modifyEvent =
@@ -128,6 +128,8 @@ export function renderCalendar(containerEl: HTMLElement, eventSources: EventSour
         editable: modifyEvent && true,
         eventDrop: modifyEvent,
         eventResize: modifyEvent,
+
+        datesSet: settings.datesSet,
 
         eventMouseEnter: settings.eventMouseEnter,
 
