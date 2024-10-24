@@ -38,6 +38,7 @@
 		"@fullcalendar/list": "^6.1.15",
 		"@fullcalendar/rrule": "^6.1.15",
 		"@fullcalendar/timegrid": "^6.1.15",
+		"guid-typescript": "^1.0.9",
 		"obsidian-sample-plugin": "file:"
 	}
 }

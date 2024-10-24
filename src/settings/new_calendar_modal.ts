@@ -1,17 +1,21 @@
 import { App, Modal, Notice, Setting } from "obsidian";
 import { ObsidianChronicleCalendarSetting } from "./obsidian_chronicle_settings";
+import { Guid } from "guid-typescript";
+import ChroniclePlugin from "@src/main";
 
 export default class NewCalendarModal extends Modal {
 
     private readonly _app: App;
+    private readonly _plugin: ChroniclePlugin;
 
     private name: string;
     private directory: string;
     private colour: string = '#d2122e';
 
-    constructor(app: App, onSubmit: (result: ObsidianChronicleCalendarSetting) => void) {
+    constructor(app: App, plugin: ChroniclePlugin, onSubmit: (result: ObsidianChronicleCalendarSetting) => void) {
         super(app);
         this._app = app;
+        this._plugin = plugin;
         
         this.setTitle('New Calendar');
         this.buildNameField();
@@ -33,7 +37,7 @@ export default class NewCalendarModal extends Modal {
                     }
 
                     // The result can be submitted once it has passed validation
-                    onSubmit({ name: this.name, directory: this.directory, colour: this.colour });
+                    onSubmit({ id: Guid.create(), name: this.name, directory: this.directory, colour: this.colour });
                     this.close();
                 }));
     }
@@ -54,9 +58,16 @@ export default class NewCalendarModal extends Modal {
     }
 
     private buildDirectorySelectorField() {
+        const claimedFolders = this._plugin.settings.calendars.map(x => x.directory);
+
         const folders = this._app.vault.getAllFolders();
         const options = {} as Record<string, string>;
         folders.forEach(f => {
+            // If the folder has already been claimed by another calendar, don't add it to the list of options
+            if(claimedFolders.contains(f.path)) {
+                return;
+            }
+
             options[f.path] = f.path
         })
 

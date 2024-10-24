@@ -1,5 +1,5 @@
 import ChroniclePlugin from "@src/main";
-import { App, PluginSettingTab, Setting } from "obsidian";
+import { App, Notice, PluginSettingTab, Setting } from "obsidian";
 import { ObsidianChronicleCalendarSetting } from "./obsidian_chronicle_settings";
 import NewCalendarModal from "./new_calendar_modal";
 
@@ -28,13 +28,17 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
             //     .addOption('2', 'Option 2'))
             .addButton(cb => cb
                 .setIcon('plus')
-                .onClick(_ => new NewCalendarModal(this.app, r => this.onAddCalendar(r)).open()));
+                .onClick(_ => new NewCalendarModal(this.app, this._plugin, r => this.onAddCalendar(r)).open()));
         this._plugin.settings.calendars.forEach(c => this.addCalendarConfigurationRow(c, containerEl)); 
 
         new Setting(containerEl)
             .addButton(cb => cb
                 .setButtonText('Save changes')
                 .setCta()
+                .onClick(async () => {
+                    await this.onSaveAsync();
+                    new Notice('Settings saved successfully!');
+                })
             )
     }
 
@@ -47,6 +51,7 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
         setting.addButton(comp => comp
             .setIcon('cross')
             .setWarning()
+            .onClick(() => this.onDeleteCalendar(calendar))
         );
 
         // Calendar name
@@ -74,6 +79,22 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
     private onAddCalendar(result: ObsidianChronicleCalendarSetting) {
         this._plugin.settings.calendars.push(result);
         this.display();
+    }
+
+    private onDeleteCalendar(calendar: ObsidianChronicleCalendarSetting) {
+        // TODO #13: confirmation dialog
+        const calendarIndex = this._plugin.settings.calendars.findIndex(x => x.id.toString() === calendar.id.toString());
+        if(calendarIndex === -1) {
+            // TODO #13: display error
+            return;
+        }
+
+        this._plugin.settings.calendars.splice(calendarIndex, 1);
+        this.display();
+    }
+
+    private async onSaveAsync() {
+        await this._plugin.saveData(this._plugin.settings);
     }
 
 }
