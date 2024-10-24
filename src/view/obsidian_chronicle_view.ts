@@ -1,7 +1,7 @@
 import { ItemView, WorkspaceLeaf } from "obsidian";
 import { renderCalendar } from './calendar';
 import { Calendar, DateSelectArg, DatesSetArg, EventApi, EventClickArg, EventHoveringArg, EventInput } from "@fullcalendar/core";
-import NewTaskModal from "./new_task_modal";
+import NewEventModal from "./new_event_modal";
 import ChroniclePlugin from "@src/main";
 import { replaceLastOccurance } from "@src/utils/string_utils";
 
@@ -77,7 +77,7 @@ export default class ObsidianChronicleView extends ItemView {
     }
 
     async select(args: DateSelectArg) {
-        const modal = new NewTaskModal(this.app, { 
+        const modal = new NewEventModal(this.app, this._plugin, { 
             start: args.start, 
             end: args.end,
             onSaveAsync: async (result) => {
@@ -96,10 +96,9 @@ export default class ObsidianChronicleView extends ItemView {
                 let content = `---
 start: ${ args.start.toISOString() }
 end: ${args.end.toISOString() }
----
-${result.description}`;
+---`;
 
-                await this.app.vault.create(`${result.title}.md`, content);
+                // await this.app.vault.create(`${result.title}.md`, content);
                 return true;
             }
         });

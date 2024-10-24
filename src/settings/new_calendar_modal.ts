@@ -37,7 +37,7 @@ export default class NewCalendarModal extends Modal {
                     }
 
                     // The result can be submitted once it has passed validation
-                    onSubmit({ id: Guid.create(), name: this.name, directory: this.directory, colour: this.colour });
+                    onSubmit({ id: Guid.raw(), name: this.name, directory: this.directory, colour: this.colour });
                     this.close();
                 }));
     }

@@ -1,11 +1,9 @@
-import { Guid } from "guid-typescript";
-
 export default interface ObsidianChronicleSettings {
     calendars: ObsidianChronicleCalendarSetting[];
 }
 
 export interface ObsidianChronicleCalendarSetting {
-    id: Guid;
+    id: string;
     name: string;
     directory: string;
     colour: string;

@@ -85,7 +85,7 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
 
     private onDeleteCalendar(calendar: ObsidianChronicleCalendarSetting) {
         // TODO #13: confirmation dialog
-        const calendarIndex = this._plugin.settings.calendars.findIndex(x => x.id.toString() === calendar.id.toString());
+        const calendarIndex = this._plugin.settings.calendars.findIndex(x => x.id === calendar.id);
         if(calendarIndex === -1) {
             // TODO #13: display error
             return;
