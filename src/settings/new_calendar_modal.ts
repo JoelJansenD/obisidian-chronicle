@@ -69,7 +69,7 @@ export default class NewCalendarModal extends Modal {
             }
 
             options[f.path] = f.path
-        })
+        });
 
         new Setting(this.contentEl)
             .setName('Directory')

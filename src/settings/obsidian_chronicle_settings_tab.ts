@@ -58,6 +58,7 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
         setting.addText(comp => comp
             .setPlaceholder('Calendar name')
             .setValue(calendar.name)
+            .onChange(val => calendar.name = val)
         );
 
         // Calendar note directory
@@ -70,6 +71,7 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
         // Calendar event colour
         setting.addColorPicker(comp => comp
             .setValue(calendar.colour)
+            .onChange(val => calendar.colour = val)
         );
 
         // Remove the info element since it doesn't have any content but takes 40% of the row width
