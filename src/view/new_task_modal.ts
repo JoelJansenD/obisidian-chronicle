@@ -3,6 +3,7 @@ import { App, IconName, Modal, setIcon } from "obsidian";
 
 export type NewTaskModalResult = {
     title: string;
+    description: string;
 }
 
 export type NewTaskModalInput = {
@@ -24,8 +25,17 @@ export default class NewTaskModal extends Modal {
     onOpen(): void {
         const { contentEl } = this;
         const container = contentEl.createDiv({ cls: 'oc__modal__container' });
+        
+        // Title input
         const eventTitleRow = this.createFormRow(container, null, 'input', { type: 'text', placeholder: 'Add new event', cls: 'oc__modal__item--header' });
+        
+        // Selected datetimes
         this.createFormRow(container, 'hourglass', 'span', { text: this.formatStartEndString(this._input.start, this._input.end) });
+
+        // Description
+        this.createFormRow(container, null, 'hr', undefined);
+        const descriptionRow = this.createFormRow(container, null, 'textarea', undefined);
+        descriptionRow.contentEl.placeholder = 'Add description'; // For some reason, adding it as DomElementInfo doesn't actually add a placeholder
 
         const actionRow = this.createFormRow(container, null, 'div', { cls: 'oc__modal__item--actions' });
         const actionContent = actionRow.contentEl;
@@ -38,7 +48,10 @@ export default class NewTaskModal extends Modal {
             }
         });
         saveButton.addEventListener('click', async () => {
-            if(!this._input.onSaveAsync || await this._input.onSaveAsync({ title: (eventTitleRow.contentEl as HTMLInputElement).value })) {
+            const title = (eventTitleRow.contentEl as HTMLInputElement).value;
+            const description = (descriptionRow.contentEl as HTMLTextAreaElement).value;
+
+            if(!this._input.onSaveAsync || await this._input.onSaveAsync({ title, description })) {
                 this.close();
             }
         });
@@ -55,7 +68,11 @@ export default class NewTaskModal extends Modal {
             iconEl = container.createDiv({ cls: 'oc__modal__item oc__modal__item--icon' });
             setIcon(iconEl, icon);
         }
-        const contentEl = container.createEl(tag, o ? {...o, cls: `oc__modal__item oc__modal__item--content ${o.cls}` } : { cls: 'oc__modal__item oc__modal__item--content' });
+
+        const elemInfo = o 
+            ? { ...o, cls: `oc__modal__item oc__modal__item--content ${o.cls ?? ''}` } 
+            : { cls: 'oc__modal__item oc__modal__item--content' };
+        const contentEl = container.createEl(tag, elemInfo);
         return {iconEl, contentEl};
     }
 

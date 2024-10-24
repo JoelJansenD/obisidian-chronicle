@@ -91,6 +91,7 @@ table.fc-scrollgrid, table.fc-scrollgrid th {
 .oc__modal__item--content {
   grid-column-start: 2;
   grid-column-end: span 1;
+  margin: 0px !important;
 }
 
 .oc__modal__item--header {

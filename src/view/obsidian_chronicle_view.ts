@@ -3,6 +3,7 @@ import { renderCalendar } from './calendar';
 import { Calendar, DateSelectArg, DatesSetArg, EventApi, EventClickArg, EventHoveringArg, EventInput } from "@fullcalendar/core";
 import NewTaskModal from "./new_task_modal";
 import ChroniclePlugin from "@src/main";
+import { replaceLastOccurance } from "@src/utils/string_utils";
 
 export const CHRONICLE_VIEW_TYPE = 'full-calendar-view';
 export default class ObsidianChronicleView extends ItemView {
@@ -42,7 +43,7 @@ export default class ObsidianChronicleView extends ItemView {
         for (let i = 0; i < displayedNotes.length; i++) {
             const note = displayedNotes[i];
             const event: EventInput = {
-                title: note.file.name,
+                title: replaceLastOccurance(note.file.name, '.md', ''),
                 start: note.metadata['start'],
                 end: note.metadata['end'],
                 allDay: false
@@ -95,7 +96,8 @@ export default class ObsidianChronicleView extends ItemView {
                 let content = `---
 start: ${ args.start.toISOString() }
 end: ${args.end.toISOString() }
----`;
+---
+${result.description}`;
 
                 await this.app.vault.create(`${result.title}.md`, content);
                 return true;
