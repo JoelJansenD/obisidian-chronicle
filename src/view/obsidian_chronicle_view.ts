@@ -5,7 +5,7 @@ import NewTaskModal from "./new_task_modal";
 import ChroniclePlugin from "@src/main";
 import { replaceLastOccurance } from "@src/utils/string_utils";
 
-export const CHRONICLE_VIEW_TYPE = 'full-calendar-view';
+export const CHRONICLE_VIEW_TYPE = 'obsidia-chronicle-view';
 export default class ObsidianChronicleView extends ItemView {
 
     private fullCalendar: Calendar | null;
