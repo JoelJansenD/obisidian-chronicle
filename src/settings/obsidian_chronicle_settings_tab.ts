@@ -10,9 +10,20 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
     constructor(app: App, plugin: ChroniclePlugin) {
         super(app, plugin);
         this._plugin = plugin;
+
     }
     
     display(): void {
+        this.renderAsync(true);
+    }
+
+    private async renderAsync(firstRender: boolean) {
+        if(firstRender) {
+            // Before building the settings interface, load the current data.json into the settings
+            // If we don't do this, any unsaved changes remain in the settings object, requireing a reload in Obsidian
+            await this._plugin.loadSettings();
+        }
+
         const containerEl = this.containerEl;
 
         containerEl.empty();
@@ -80,13 +91,15 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
 
     private onAddCalendar(result: ObsidianChronicleCalendarSetting) {
         this._plugin.settings.calendars.push(result);
-        this.display();
+        this.renderAsync(false);
     }
 
     private onDeleteCalendar(calendar: ObsidianChronicleCalendarSetting) {
         const calendarIndex = this._plugin.settings.calendars.findIndex(x => x.id === calendar.id);
         if(calendarIndex === -1) {
-            // TODO #13: display error
+            const modal = new Modal(this.app).setContent(`The calendar '${ calendar.name || calendar.directory }' could not be found.`);
+                new Setting(modal.contentEl).addButton(btn => btn.setButtonText('Close').setWarning().onClick(() => modal.close));
+                modal.open();
             return;
         }
 
@@ -99,7 +112,7 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
                 .setWarning()
                 .onClick(() => {
                     this._plugin.settings.calendars.splice(calendarIndex, 1);
-                    this.display();
+                    this.renderAsync(false);
                     confirmationModal.close();
                 })
             );
