@@ -69,7 +69,9 @@ export default class NewEventModal extends Modal {
                 .onChange(val => {
                     const calendar = this._plugin.settings.calendars.find(x => x.id === val);
                     if(!calendar) {
-                        // TODO #13: If no calendar was found, display error
+                        const modal = new Modal(this.app).setContent(`No calendar found for ID '${val}'.`);
+                        new Setting(modal.contentEl).addButton(btn => btn.setButtonText('Close').setWarning().onClick(() => modal.close));
+                        modal.open();
                         return;
                     }
                     this.calendar = calendar;
