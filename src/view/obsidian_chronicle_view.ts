@@ -1,11 +1,11 @@
-import { ItemView, WorkspaceLeaf } from "obsidian";
+import { ItemView, Notice, WorkspaceLeaf } from "obsidian";
 import { renderCalendar } from './calendar';
 import { Calendar, DateSelectArg, DatesSetArg, EventApi, EventClickArg, EventHoveringArg, EventInput } from "@fullcalendar/core";
-import NewTaskModal from "./new_task_modal";
+import NewEventModal from "./new_event_modal";
 import ChroniclePlugin from "@src/main";
 import { replaceLastOccurance } from "@src/utils/string_utils";
 
-export const CHRONICLE_VIEW_TYPE = 'full-calendar-view';
+export const CHRONICLE_VIEW_TYPE = 'obsidia-chronicle-view';
 export default class ObsidianChronicleView extends ItemView {
 
     private fullCalendar: Calendar | null;
@@ -42,11 +42,16 @@ export default class ObsidianChronicleView extends ItemView {
 
         for (let i = 0; i < displayedNotes.length; i++) {
             const note = displayedNotes[i];
+            const calendarId = note.metadata['calendarId'] as string;
+            const calendar = this._plugin.settings.calendars.find(x => x.id === calendarId);
+
             const event: EventInput = {
                 title: replaceLastOccurance(note.file.name, '.md', ''),
                 start: note.metadata['start'],
                 end: note.metadata['end'],
-                allDay: false
+                allDay: false,
+                backgroundColor: calendar?.colour,
+                borderColor: calendar?.colour,
             };
             dateInfo.view.calendar.addEvent(event);
         }
@@ -77,34 +82,40 @@ export default class ObsidianChronicleView extends ItemView {
     }
 
     async select(args: DateSelectArg) {
-        const modal = new NewTaskModal(this.app, { 
-            start: args.start, 
-            end: args.end,
-            onSaveAsync: async (result) => {
-                if(!result.title) {
-                    return false;
+        try {
+            const modal = new NewEventModal(this.app, this._plugin, { 
+                start: args.start, 
+                end: args.end,
+                onSaveAsync: async (result) => {
+                    if(!result.title) {
+                        return false;
+                    }
+
+                    const event: EventInput = {
+                        title: result.title,
+                        start: args.start,
+                        end: args.end,
+                        allDay: args.allDay,
+                        backgroundColor: result.calendar.colour,
+                        borderColor: result.calendar.colour
+                    };
+                    args.view.calendar.addEvent(event);
+
+                    let content = `---
+    calendarId: ${ result.calendar.id }
+    start: ${ args.start.toISOString() }
+    end: ${args.end.toISOString() }
+    ---`;
+
+                    await this.app.vault.create(`${result.calendar.directory}/${result.title}.md`, content);
+                    return true;
                 }
-
-                const event: EventInput = {
-                    title: result.title,
-                    start: args.start,
-                    end: args.end,
-                    allDay: args.allDay
-                };
-                args.view.calendar.addEvent(event);
-
-                let content = `---
-start: ${ args.start.toISOString() }
-end: ${args.end.toISOString() }
----
-${result.description}`;
-
-                await this.app.vault.create(`${result.title}.md`, content);
-                return true;
-            }
-        });
-        modal.open();
-
+            });
+            modal.open();
+        }
+        catch(e) {
+            new Notice(e);
+        }
     }
 
     async toggleTask(e: EventApi, isDone: boolean) {
