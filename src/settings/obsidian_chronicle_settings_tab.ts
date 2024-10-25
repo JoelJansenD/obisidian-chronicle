@@ -10,7 +10,6 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
     constructor(app: App, plugin: ChroniclePlugin) {
         super(app, plugin);
         this._plugin = plugin;
-
     }
     
     display(): void {

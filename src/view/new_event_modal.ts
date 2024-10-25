@@ -1,6 +1,6 @@
 import ChroniclePlugin from "@src/main";
 import { ObsidianChronicleCalendarSetting } from "@src/settings/obsidian_chronicle_settings";
-import { App, IconName, Modal, setIcon, Setting } from "obsidian";
+import { App, IconName, Modal, Notice, setIcon, Setting } from "obsidian";
 
 export type NewTaskModalResult = {
     title: string;
@@ -27,8 +27,7 @@ export default class NewEventModal extends Modal {
         
         const defaultCalendar = this._plugin.settings.calendars.first();
         if(!defaultCalendar) {
-            // TODO #13: Display error instead of event modal telling user to create new calendar first
-            return;
+            throw 'You must add at least one calendar in the settings menu before adding new events';
         }
         this.calendar = defaultCalendar;
 

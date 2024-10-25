@@ -1,4 +1,4 @@
-import { ItemView, WorkspaceLeaf } from "obsidian";
+import { ItemView, Notice, WorkspaceLeaf } from "obsidian";
 import { renderCalendar } from './calendar';
 import { Calendar, DateSelectArg, DatesSetArg, EventApi, EventClickArg, EventHoveringArg, EventInput } from "@fullcalendar/core";
 import NewEventModal from "./new_event_modal";
@@ -82,36 +82,40 @@ export default class ObsidianChronicleView extends ItemView {
     }
 
     async select(args: DateSelectArg) {
-        const modal = new NewEventModal(this.app, this._plugin, { 
-            start: args.start, 
-            end: args.end,
-            onSaveAsync: async (result) => {
-                if(!result.title) {
-                    return false;
+        try {
+            const modal = new NewEventModal(this.app, this._plugin, { 
+                start: args.start, 
+                end: args.end,
+                onSaveAsync: async (result) => {
+                    if(!result.title) {
+                        return false;
+                    }
+
+                    const event: EventInput = {
+                        title: result.title,
+                        start: args.start,
+                        end: args.end,
+                        allDay: args.allDay,
+                        backgroundColor: result.calendar.colour,
+                        borderColor: result.calendar.colour
+                    };
+                    args.view.calendar.addEvent(event);
+
+                    let content = `---
+    calendarId: ${ result.calendar.id }
+    start: ${ args.start.toISOString() }
+    end: ${args.end.toISOString() }
+    ---`;
+
+                    await this.app.vault.create(`${result.calendar.directory}/${result.title}.md`, content);
+                    return true;
                 }
-
-                const event: EventInput = {
-                    title: result.title,
-                    start: args.start,
-                    end: args.end,
-                    allDay: args.allDay,
-                    backgroundColor: result.calendar.colour,
-                    borderColor: result.calendar.colour
-                };
-                args.view.calendar.addEvent(event);
-
-                let content = `---
-calendarId: ${ result.calendar.id }
-start: ${ args.start.toISOString() }
-end: ${args.end.toISOString() }
----`;
-
-                await this.app.vault.create(`${result.calendar.directory}/${result.title}.md`, content);
-                return true;
-            }
-        });
-        modal.open();
-
+            });
+            modal.open();
+        }
+        catch(e) {
+            new Notice(e);
+        }
     }
 
     async toggleTask(e: EventApi, isDone: boolean) {
