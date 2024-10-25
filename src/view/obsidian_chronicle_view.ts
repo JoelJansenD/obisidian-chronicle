@@ -42,11 +42,16 @@ export default class ObsidianChronicleView extends ItemView {
 
         for (let i = 0; i < displayedNotes.length; i++) {
             const note = displayedNotes[i];
+            const calendarId = note.metadata['calendarId'] as string;
+            const calendar = this._plugin.settings.calendars.find(x => x.id === calendarId);
+
             const event: EventInput = {
                 title: replaceLastOccurance(note.file.name, '.md', ''),
                 start: note.metadata['start'],
                 end: note.metadata['end'],
-                allDay: false
+                allDay: false,
+                backgroundColor: calendar?.colour,
+                borderColor: calendar?.colour,
             };
             dateInfo.view.calendar.addEvent(event);
         }
@@ -89,16 +94,19 @@ export default class ObsidianChronicleView extends ItemView {
                     title: result.title,
                     start: args.start,
                     end: args.end,
-                    allDay: args.allDay
+                    allDay: args.allDay,
+                    backgroundColor: result.calendar.colour,
+                    borderColor: result.calendar.colour
                 };
                 args.view.calendar.addEvent(event);
 
                 let content = `---
+calendarId: ${ result.calendar.id }
 start: ${ args.start.toISOString() }
 end: ${args.end.toISOString() }
 ---`;
 
-                // await this.app.vault.create(`${result.title}.md`, content);
+                await this.app.vault.create(`${result.calendar.directory}/${result.title}.md`, content);
                 return true;
             }
         });

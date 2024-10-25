@@ -1,5 +1,5 @@
 import ChroniclePlugin from "@src/main";
-import { App, Notice, PluginSettingTab, Setting } from "obsidian";
+import { App, Modal, Notice, PluginSettingTab, Setting } from "obsidian";
 import { ObsidianChronicleCalendarSetting } from "./obsidian_chronicle_settings";
 import NewCalendarModal from "./new_calendar_modal";
 
@@ -49,7 +49,7 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
 
         // Delete calendar button
         setting.addButton(comp => comp
-            .setIcon('cross')
+            .setIcon('trash')
             .setWarning()
             .onClick(() => this.onDeleteCalendar(calendar))
         );
@@ -84,15 +84,26 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
     }
 
     private onDeleteCalendar(calendar: ObsidianChronicleCalendarSetting) {
-        // TODO #13: confirmation dialog
         const calendarIndex = this._plugin.settings.calendars.findIndex(x => x.id === calendar.id);
         if(calendarIndex === -1) {
             // TODO #13: display error
             return;
         }
 
-        this._plugin.settings.calendars.splice(calendarIndex, 1);
-        this.display();
+        const confirmationModal = new Modal(this.app);
+        confirmationModal.setTitle(`Delete calendar ${ calendar.name || calendar.directory }`);
+        confirmationModal.setContent('Are you sure you want to delete this calendar? Once your changes have been saved, they cannot be reverted!');
+        new Setting(confirmationModal.contentEl)
+            .addButton(btn => btn
+                .setButtonText('Delete')
+                .setWarning()
+                .onClick(() => {
+                    this._plugin.settings.calendars.splice(calendarIndex, 1);
+                    this.display();
+                    confirmationModal.close();
+                })
+            );
+        confirmationModal.open();
     }
 
     private async onSaveAsync() {
