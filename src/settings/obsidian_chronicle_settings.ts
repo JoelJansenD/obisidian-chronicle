@@ -1,14 +1,10 @@
-export default interface ObsidianChronicleSettings {
-    calendars: ObsidianChronicleCalendarSetting[];
+export type ChronicleSettings = {
+    calendars: ChronicleCalendar[];
 }
 
-export interface ObsidianChronicleCalendarSetting {
+export type ChronicleCalendar = {
     id: string;
     name: string;
     directory: string;
     colour: string;
-}
-
-export const DEFAULT_SETTINGS : ObsidianChronicleSettings = {
-    calendars: [ ]
 }

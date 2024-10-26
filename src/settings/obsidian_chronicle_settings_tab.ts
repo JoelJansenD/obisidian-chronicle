@@ -1,6 +1,6 @@
 import ChroniclePlugin from "@src/main";
 import { App, Modal, Notice, PluginSettingTab, Setting } from "obsidian";
-import { ObsidianChronicleCalendarSetting } from "./obsidian_chronicle_settings";
+import { ChronicleCalendar } from "./obsidian_chronicle_settings";
 import NewCalendarModal from "./new_calendar_modal";
 
 export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
@@ -52,7 +52,7 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
             )
     }
 
-    private addCalendarConfigurationRow(calendar: ObsidianChronicleCalendarSetting, containerEl: HTMLElement) {
+    private addCalendarConfigurationRow(calendar: ChronicleCalendar, containerEl: HTMLElement) {
         // We create a new div inside the container so that no top row is rendered
         // between the first calendar row and the "add new calendar" row
         const setting = new Setting(containerEl.createDiv());
@@ -88,12 +88,12 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
         setting.infoEl.remove();
     }
 
-    private onAddCalendar(result: ObsidianChronicleCalendarSetting) {
+    private onAddCalendar(result: ChronicleCalendar) {
         this._plugin.settings.calendars.push(result);
         this.renderAsync(false);
     }
 
-    private onDeleteCalendar(calendar: ObsidianChronicleCalendarSetting) {
+    private onDeleteCalendar(calendar: ChronicleCalendar) {
         const calendarIndex = this._plugin.settings.calendars.findIndex(x => x.id === calendar.id);
         if(calendarIndex === -1) {
             const modal = new Modal(this.app).setContent(`The calendar '${ calendar.name || calendar.directory }' could not be found.`);

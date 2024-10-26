@@ -1,10 +1,10 @@
 import ChroniclePlugin from "@src/main";
-import { ObsidianChronicleCalendarSetting } from "@src/settings/obsidian_chronicle_settings";
+import { ChronicleCalendar } from "@src/settings/obsidian_chronicle_settings";
 import { App, IconName, Modal, Notice, setIcon, Setting } from "obsidian";
 
 export type NewTaskModalResult = {
     title: string;
-    calendar: ObsidianChronicleCalendarSetting;
+    calendar: ChronicleCalendar;
 }
 
 export type NewTaskModalInput = {
@@ -18,7 +18,7 @@ export default class NewEventModal extends Modal {
     private readonly _plugin: ChroniclePlugin;
 
     private name: string;
-    private calendar: ObsidianChronicleCalendarSetting;
+    private calendar: ChronicleCalendar;
 
     constructor(app: App, plugin: ChroniclePlugin, input: NewTaskModalInput) {
         super(app);
