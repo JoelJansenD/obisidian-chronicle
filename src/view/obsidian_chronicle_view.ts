@@ -5,6 +5,7 @@ import NewEventModal from "./new_event_modal";
 import ChroniclePlugin from "@src/main";
 import { replaceLastOccurance } from "@src/utils/string_utils";
 import { createEvent } from "@src/events/events";
+import { getCalendarById } from "@src/calendars/calendars";
 
 export const CHRONICLE_VIEW_TYPE = 'obsidia-chronicle-view';
 export default class ObsidianChronicleView extends ItemView {
@@ -44,8 +45,7 @@ export default class ObsidianChronicleView extends ItemView {
         for (let i = 0; i < displayedNotes.length; i++) {
             const note = displayedNotes[i];
             const calendarId = note.metadata['calendarId'] as string;
-            const calendar = this._plugin.settings.calendars.find(x => x.id === calendarId);
-
+            const calendar = getCalendarById(this._plugin.settings, calendarId);
             createEvent(dateInfo.view.calendar, {
                 title: replaceLastOccurance(note.file.name, '.md', ''),
                 start: note.metadata['start'],

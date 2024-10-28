@@ -3,11 +3,10 @@ import ObsidianChronicleView, { CHRONICLE_VIEW_TYPE } from './view/obsidian_chro
 import NoteDataAccess from './data_access/note_data_access';
 import { ChronicleSettings } from './settings/obsidian_chronicle_settings';
 import ObsidianChronicleSettingsTab from './settings/obsidian_chronicle_settings_tab';
-import SettingsService from './settings/settings_service';
+import loadSettingsAsync from './settings/load_settings_async';
+import saveSettingsAsync from './settings/save_settings_async';
 
 export default class ChroniclePlugin extends Plugin {
-
-    private readonly _settingsService: SettingsService;
 
     private _settings: ChronicleSettings;
     public get settings() {
@@ -22,7 +21,6 @@ export default class ChroniclePlugin extends Plugin {
     constructor(app: App, manifest: PluginManifest) {
         super(app, manifest);
         this._noteDataAccess = new NoteDataAccess(app);
-        this._settingsService = new SettingsService(this);
     }
 
     async onload() {
@@ -60,7 +58,7 @@ export default class ChroniclePlugin extends Plugin {
     }
 
     async loadSettings() {
-        this._settings = await new SettingsService(this).loadSettingsAsync();
+        this._settings = await loadSettingsAsync();
     }
 
     onunload() {
@@ -68,7 +66,7 @@ export default class ChroniclePlugin extends Plugin {
     }
 
     async saveSettings() {
-        await this._settingsService.saveSettingsAsync(this._settings);
+        await saveSettingsAsync(this._settings);
     }
 
 };
