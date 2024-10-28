@@ -4,16 +4,20 @@ import { Calendar, DateSelectArg, DatesSetArg, EventApi, EventClickArg, EventHov
 import NewEventModal from "./new_event_modal";
 import ChroniclePlugin from "@src/main";
 import { replaceLastOccurance } from "@src/utils/string_utils";
+import EventService from "@src/events/event_service";
 
 export const CHRONICLE_VIEW_TYPE = 'obsidia-chronicle-view';
 export default class ObsidianChronicleView extends ItemView {
 
     private fullCalendar: Calendar | null;
     private readonly _plugin: ChroniclePlugin;
+    private readonly _eventService: EventService;
 
     constructor(leaf: WorkspaceLeaf, plugin: ChroniclePlugin) {
         super(leaf);
         this._plugin = plugin;
+
+        this._eventService = new EventService();
     }
 
     datesSet(dateInfo: DatesSetArg) {
@@ -45,15 +49,14 @@ export default class ObsidianChronicleView extends ItemView {
             const calendarId = note.metadata['calendarId'] as string;
             const calendar = this._plugin.settings.calendars.find(x => x.id === calendarId);
 
-            const event: EventInput = {
+            this._eventService.createEvent(dateInfo.view.calendar, {
                 title: replaceLastOccurance(note.file.name, '.md', ''),
                 start: note.metadata['start'],
                 end: note.metadata['end'],
                 allDay: false,
                 backgroundColor: calendar?.colour,
                 borderColor: calendar?.colour,
-            };
-            dateInfo.view.calendar.addEvent(event);
+            });
         }
     }
 
@@ -99,7 +102,7 @@ export default class ObsidianChronicleView extends ItemView {
                         backgroundColor: result.calendar.colour,
                         borderColor: result.calendar.colour
                     };
-                    args.view.calendar.addEvent(event);
+                    this._eventService.createEvent(args.view.calendar, event);
 
                     let content = `---
     calendarId: ${ result.calendar.id }
