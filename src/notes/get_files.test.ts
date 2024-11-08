@@ -2,9 +2,14 @@ import { App, TFile } from "obsidian";
 import getFiles from "./get_files";
 
 describe('getFiles', () => {
+    let app: App;
+
+    beforeEach(() => {
+        app = new App();
+    });
+
     it('returns all files in the vault', () => {
         // Arrange
-        const app = new App();
         app.vault.getFiles = jest.fn().mockReturnValue([ new TFile(), new TFile() ]);
         const getFilesSpy = jest.spyOn(app.vault, 'getFiles');
 
@@ -18,7 +23,6 @@ describe('getFiles', () => {
     
     it('returns no files when the vault is empty', () => {
         // Arrange
-        const app = new App();
         app.vault.getFiles = jest.fn().mockReturnValue([]);
         const getFilesSpy = jest.spyOn(app.vault, 'getFiles');
 
