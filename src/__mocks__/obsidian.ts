@@ -1,8 +1,18 @@
 export class App {
     vault = new Vault();
-    workspace = {
-        
-    };
+    metadataCache = new MetadataCache();
+}
+
+export class CachedMetadata {
+    frontmatter = new FrontMatterCache();
+}
+
+export class FrontMatterCache {
+
+}
+
+export class MetadataCache {
+    getFileCache = jest.fn();
 }
 
 export class TFile {
@@ -14,9 +24,4 @@ export class Vault {
     readFile = jest.fn();
     getFiles = jest.fn();
     writeFile = jest.fn();
-}
-
-export class Workspace {
-    on = jest.fn();
-    off = jest.fn();
 }
