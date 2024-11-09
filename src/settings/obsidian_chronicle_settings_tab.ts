@@ -14,16 +14,15 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
     }
     
     display(): void {
-        this.renderAsync(true);
+        // Before building the settings interface, load the current data.json into the settings
+        // If we don't do this, any unsaved changes remain in the settings object, requireing a reload in Obsidian
+        this._plugin.loadSettings()
+        .then(() => {
+            this.renderAsync();
+        })
     }
 
-    private async renderAsync(firstRender: boolean) {
-        if(firstRender) {
-            // Before building the settings interface, load the current data.json into the settings
-            // If we don't do this, any unsaved changes remain in the settings object, requireing a reload in Obsidian
-            await this._plugin.loadSettings();
-        }
-
+    private async renderAsync() {
         const containerEl = this.containerEl;
 
         containerEl.empty();
@@ -90,7 +89,7 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
     }
 
     private onAddCalendar(_: ChronicleCalendar) {
-        this.renderAsync(false);
+        this.renderAsync();
     }
 
     private onDeleteCalendar(calendar: ChronicleCalendar) {
@@ -104,7 +103,7 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
                 .onClick(() => {
                     try {
                         deleteCalendarWithId(this._plugin.settings, calendar.id);
-                        this.renderAsync(false);
+                        this.renderAsync();
                         confirmationModal.close();
                     }
                     catch(e) {
