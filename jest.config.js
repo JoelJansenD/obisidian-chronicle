@@ -5,7 +5,7 @@ module.exports = {
   testMatch: ['**/*.test.ts'],    // Pattern to find test files (adjust as needed)
   moduleDirectories: ['node_modules', 'src'],     // Allow Jest to resolve modules from /src/
   moduleNameMapper: {                 // Map paths (if you're using TypeScript path aliases)
+    '^@src/(.*)$': '<rootDir>/src/$1', // Example alias: import { xyz } from '@src/xyz' maps to /src/xyz.ts
     '^obsidian$': 'src/__mocks__/obsidian.ts',
-    '^@src/(.*)$': 'src/$1', // Example alias: import { xyz } from '@src/xyz' maps to /src/xyz.ts
   },
 };

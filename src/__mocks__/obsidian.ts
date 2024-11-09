@@ -11,12 +11,28 @@ export class FrontMatterCache {
 
 }
 
+export class ItemView {
+
+}
+
 export class MetadataCache {
     getFileCache = jest.fn();
 }
 
+export class Modal {
+
+}
+
 export class TFile {
     
+}
+
+export class Plugin {
+    loadData = jest.fn();
+}
+
+export class PluginSettingTab {
+
 }
 
 export class Vault {
