@@ -9,6 +9,7 @@ module.exports = {
     '^obsidian$': 'src/__mocks__/obsidian.ts',
   },
   coveragePathIgnorePatterns: [
-    'src/modals/add_new_calendar/add_new_calendar_modal.ts'
+    'src/modals/add_new_calendar/add_new_calendar_modal.ts',
+    'src/settings/obsidian_chronicle_settings_tab.ts',
   ]
 };
