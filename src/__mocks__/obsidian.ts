@@ -24,7 +24,9 @@ export class Modal {
 }
 
 export class TFile {
-    
+}
+
+export class TFolder {
 }
 
 export class Plugin {
@@ -36,8 +38,9 @@ export class PluginSettingTab {
 }
 
 export class Vault {
+    getAllFolders = jest.fn();
     getMarkdownFiles = jest.fn();
-    read = jest.fn();
     getFiles = jest.fn();
+    read = jest.fn();
     writeFile = jest.fn();
 }
