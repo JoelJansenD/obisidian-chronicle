@@ -89,7 +89,6 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
     }
 
     private onAddCalendar(result: ChronicleCalendar) {
-        this._plugin.settings.calendars.push(result);
         this.renderAsync(false);
     }
 
