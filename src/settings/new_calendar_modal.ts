@@ -64,7 +64,7 @@ export default class NewCalendarModal extends Modal {
         const options = {} as Record<string, string>;
         folders.forEach(f => {
             // If the folder has already been claimed by another calendar, don't add it to the list of options
-            if(claimedFolders.contains(f.path)) {
+            if(claimedFolders.includes(f.path)) {
                 return;
             }
 

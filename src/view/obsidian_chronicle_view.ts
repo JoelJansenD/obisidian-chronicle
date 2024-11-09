@@ -5,7 +5,7 @@ import NewEventModal from "./new_event_modal";
 import ChroniclePlugin from "@src/main";
 import { replaceLastOccurance } from "@src/utils/string_utils";
 import { createEvent } from "@src/events/events";
-import { getCalendarById } from "@src/calendars/calendars";
+import { getCalendarById } from "@src/calendars/get_calendar_by_id";
 import queryFilesAsync, { QueryFilesQuery as QueryFilesParameters } from "@src/notes/query_files_async";
 
 export const CHRONICLE_VIEW_TYPE = 'obsidia-chronicle-view';
