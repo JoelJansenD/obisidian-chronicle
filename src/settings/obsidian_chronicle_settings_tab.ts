@@ -1,7 +1,7 @@
 import ChroniclePlugin from "@src/main";
 import { App, Modal, Notice, PluginSettingTab, Setting } from "obsidian";
 import { ChronicleCalendar } from "./obsidian_chronicle_settings";
-import NewCalendarModal from "./new_calendar_modal";
+import AddNewCalendarModal from "../modals/add_new_calendar/add_new_calendar_modal";
 
 export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
 
@@ -38,7 +38,7 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
             //     .addOption('2', 'Option 2'))
             .addButton(cb => cb
                 .setIcon('plus')
-                .onClick(_ => new NewCalendarModal(this.app, this._plugin, r => this.onAddCalendar(r)).open()));
+                .onClick(_ => new AddNewCalendarModal(this.app, this._plugin, r => this.onAddCalendar(r)).open()));
         this._plugin.settings.calendars.forEach(c => this.addCalendarConfigurationRow(c, containerEl)); 
 
         new Setting(containerEl)
