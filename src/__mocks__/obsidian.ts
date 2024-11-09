@@ -21,7 +21,7 @@ export class TFile {
 
 export class Vault {
     getMarkdownFiles = jest.fn();
-    readFile = jest.fn();
+    read = jest.fn();
     getFiles = jest.fn();
     writeFile = jest.fn();
 }
