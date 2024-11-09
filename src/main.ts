@@ -1,24 +1,19 @@
 import { App, Plugin, PluginManifest } from 'obsidian';
 import ObsidianChronicleView, { CHRONICLE_VIEW_TYPE } from './view/obsidian_chronicle_view';
-import NoteDataAccess from './data_access/note_data_access';
-import ObsidianChronicleSettings, { DEFAULT_SETTINGS } from './settings/obsidian_chronicle_settings';
+import { ChronicleSettings } from './settings/obsidian_chronicle_settings';
 import ObsidianChronicleSettingsTab from './settings/obsidian_chronicle_settings_tab';
+import loadSettingsAsync from './settings/load_settings_async';
+import saveSettingsAsync from './settings/save_settings_async';
 
 export default class ChroniclePlugin extends Plugin {
 
-    private _settings: ObsidianChronicleSettings;
+    private _settings: ChronicleSettings;
     public get settings() {
         return this._settings;
     }
 
-    private readonly _noteDataAccess: NoteDataAccess;
-    public get noteDataAccess() {
-        return this._noteDataAccess;
-    }
-    
     constructor(app: App, manifest: PluginManifest) {
         super(app, manifest);
-        this._noteDataAccess = new NoteDataAccess(app);
     }
 
     async onload() {
@@ -56,7 +51,7 @@ export default class ChroniclePlugin extends Plugin {
     }
 
     async loadSettings() {
-        this._settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+        this._settings = await loadSettingsAsync(this);
     }
 
     onunload() {
@@ -64,7 +59,7 @@ export default class ChroniclePlugin extends Plugin {
     }
 
     async saveSettings() {
-        await this.saveData(this.settings);
+        await saveSettingsAsync(this, this._settings);
     }
 
 };

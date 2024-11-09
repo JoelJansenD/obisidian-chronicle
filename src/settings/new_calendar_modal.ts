@@ -1,5 +1,5 @@
-import { App, Modal, Notice, Setting } from "obsidian";
-import { ObsidianChronicleCalendarSetting } from "./obsidian_chronicle_settings";
+import { App, Modal, Setting } from "obsidian";
+import { ChronicleCalendar } from "./obsidian_chronicle_settings";
 import { Guid } from "guid-typescript";
 import ChroniclePlugin from "@src/main";
 
@@ -12,7 +12,7 @@ export default class NewCalendarModal extends Modal {
     private directory: string;
     private colour: string = '#d2122e';
 
-    constructor(app: App, plugin: ChroniclePlugin, onSubmit: (result: ObsidianChronicleCalendarSetting) => void) {
+    constructor(app: App, plugin: ChroniclePlugin, onSubmit: (result: ChronicleCalendar) => void) {
         super(app);
         this._app = app;
         this._plugin = plugin;

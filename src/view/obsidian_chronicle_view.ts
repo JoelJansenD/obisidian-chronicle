@@ -4,6 +4,9 @@ import { Calendar, DateSelectArg, DatesSetArg, EventApi, EventClickArg, EventHov
 import NewEventModal from "./new_event_modal";
 import ChroniclePlugin from "@src/main";
 import { replaceLastOccurance } from "@src/utils/string_utils";
+import { createEvent } from "@src/events/events";
+import { getCalendarById } from "@src/calendars/calendars";
+import queryFilesAsync, { QueryFilesQuery as QueryFilesParameters } from "@src/notes/query_files_async";
 
 export const CHRONICLE_VIEW_TYPE = 'obsidia-chronicle-view';
 export default class ObsidianChronicleView extends ItemView {
@@ -16,14 +19,14 @@ export default class ObsidianChronicleView extends ItemView {
         this._plugin = plugin;
     }
 
-    datesSet(dateInfo: DatesSetArg) {
+    async datesSetAsync(dateInfo: DatesSetArg) {
         // We have to remove all events, otherwise switching back and forth
         // repeatedly adds the same events to the calendar
         dateInfo.view.calendar.removeAllEvents();
-        const displayedNotes = this._plugin.noteDataAccess.getFilesInDirectoryWithMetadata('', (item) => {
+        const displayedNotes = await queryFilesAsync(this.app, (item: QueryFilesParameters) => {
             const dateOrNull = (dt?: string) => dt ? new Date(dt) : null;
-            const startTime = dateOrNull(item['start']);
-            const endTime = dateOrNull(item['end']);
+            const startTime = dateOrNull(item.frontmatter?.['start']);
+            const endTime = dateOrNull(item.frontmatter?.['end']);
 
             if(!startTime || !endTime) {
                 return false;
@@ -38,22 +41,21 @@ export default class ObsidianChronicleView extends ItemView {
             }
 
             return true;
+
         });
 
         for (let i = 0; i < displayedNotes.length; i++) {
             const note = displayedNotes[i];
-            const calendarId = note.metadata['calendarId'] as string;
-            const calendar = this._plugin.settings.calendars.find(x => x.id === calendarId);
-
-            const event: EventInput = {
+            const calendarId = note.frontmatter!['calendarId'] as string;
+            const calendar = getCalendarById(this._plugin.settings, calendarId);
+            createEvent(dateInfo.view.calendar, {
                 title: replaceLastOccurance(note.file.name, '.md', ''),
-                start: note.metadata['start'],
-                end: note.metadata['end'],
+                start: note.frontmatter!['start'],
+                end: note.frontmatter!['end'],
                 allDay: false,
                 backgroundColor: calendar?.colour,
                 borderColor: calendar?.colour,
-            };
-            dateInfo.view.calendar.addEvent(event);
+            });
         }
     }
 
@@ -99,7 +101,7 @@ export default class ObsidianChronicleView extends ItemView {
                         backgroundColor: result.calendar.colour,
                         borderColor: result.calendar.colour
                     };
-                    args.view.calendar.addEvent(event);
+                    createEvent(args.view.calendar, event);
 
                     let content = `---
     calendarId: ${ result.calendar.id }
@@ -154,7 +156,7 @@ export default class ObsidianChronicleView extends ItemView {
 
             // Events
             // Instead of passing the methods as events, we have to call them to ensure that we still have access to Obsidian's API
-            datesSet: args => this.datesSet(args),
+            datesSet: args => this.datesSetAsync(args),
             eventClick: this.eventClick,
             eventMouseEnter: this.eventMouseEnter,
             modifyEvent: this.modifyEvent,
