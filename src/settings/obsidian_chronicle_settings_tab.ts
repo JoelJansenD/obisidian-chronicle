@@ -46,7 +46,7 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
                 .setButtonText('Save changes')
                 .setCta()
                 .onClick(async () => {
-                    await this.onSaveAsync();
+                    await this._plugin.saveData(this._plugin.settings);
                     new Notice('Settings saved successfully!');
                 })
             )
@@ -115,10 +115,6 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
                 })
             );
         confirmationModal.open();
-    }
-
-    private async onSaveAsync() {
-        await this._plugin.saveData(this._plugin.settings);
     }
 
 }
