@@ -2,6 +2,7 @@ import ChroniclePlugin from "@src/main";
 import { App, Modal, Notice, PluginSettingTab, Setting } from "obsidian";
 import { ChronicleCalendar } from "./obsidian_chronicle_settings";
 import AddNewCalendarModal from "../modals/add_new_calendar/add_new_calendar_modal";
+import deleteCalendarWithId from "./delete_calendar_with_id";
 
 export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
 
@@ -88,19 +89,11 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
         setting.infoEl.remove();
     }
 
-    private onAddCalendar(result: ChronicleCalendar) {
+    private onAddCalendar(_: ChronicleCalendar) {
         this.renderAsync(false);
     }
 
     private onDeleteCalendar(calendar: ChronicleCalendar) {
-        const calendarIndex = this._plugin.settings.calendars.findIndex(x => x.id === calendar.id);
-        if(calendarIndex === -1) {
-            const modal = new Modal(this.app).setContent(`The calendar '${ calendar.name || calendar.directory }' could not be found.`);
-                new Setting(modal.contentEl).addButton(btn => btn.setButtonText('Close').setWarning().onClick(() => modal.close));
-                modal.open();
-            return;
-        }
-
         const confirmationModal = new Modal(this.app);
         confirmationModal.setTitle(`Delete calendar ${ calendar.name || calendar.directory }`);
         confirmationModal.setContent('Are you sure you want to delete this calendar? Once your changes have been saved, they cannot be reverted!');
@@ -109,9 +102,17 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
                 .setButtonText('Delete')
                 .setWarning()
                 .onClick(() => {
-                    this._plugin.settings.calendars.splice(calendarIndex, 1);
-                    this.renderAsync(false);
-                    confirmationModal.close();
+                    try {
+                        deleteCalendarWithId(this._plugin.settings, calendar.id);
+                        this.renderAsync(false);
+                        confirmationModal.close();
+                    }
+                    catch(e) {
+                        const modal = new Modal(this.app).setContent(e);
+                        new Setting(modal.contentEl).addButton(btn => btn.setButtonText('Close').setWarning().onClick(() => modal.close));
+                        modal.open();
+                        return;
+                    }
                 })
             );
         confirmationModal.open();
