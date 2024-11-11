@@ -33,9 +33,9 @@ export default class ChronicleSettingsTab extends PluginSettingTab {
             .setName('Calendars')
             .setDesc('Add calendar')
             // Re-enable the dropdown when multiple calendar implementations are available
-            // .addDropdown(cb => cb
-            //     .addOption('1', 'Option 1')
-            //     .addOption('2', 'Option 2'))
+            .addDropdown(cb => cb
+                .addOption('1', 'Option 1')
+                .addOption('2', 'Option 2'))
             .addButton(cb => cb
                 .setIcon('plus')
                 .onClick(_ => new AddNewCalendarModal(this.app, this._plugin, r => this.onAddCalendar(r)).open()));
