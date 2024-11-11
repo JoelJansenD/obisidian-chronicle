@@ -6,7 +6,8 @@ import ChroniclePlugin from "@src/main";
 import { replaceLastOccurance } from "@src/utils/string_utils";
 import { createEvent } from "@src/events/events";
 import { getCalendarById } from "@src/calendars/get_calendar_by_id";
-import queryFilesAsync, { QueryFilesQuery as QueryFilesParameters } from "@src/notes/query_files_async";
+import queryFilesAsync, { QueryFilesInput } from "@src/notes/query_files_async";
+import getNotesBetweenDatesQuery from "@src/queries/get_notes_between_dates_query";
 
 export const CHRONICLE_VIEW_TYPE = 'obsidia-chronicle-view';
 export default class ObsidianChronicleView extends ItemView {
@@ -23,26 +24,9 @@ export default class ObsidianChronicleView extends ItemView {
         // We have to remove all events, otherwise switching back and forth
         // repeatedly adds the same events to the calendar
         dateInfo.view.calendar.removeAllEvents();
-        const displayedNotes = await queryFilesAsync(this.app, (item: QueryFilesParameters) => {
-            const dateOrNull = (dt?: string) => dt ? new Date(dt) : null;
-            const startTime = dateOrNull(item.frontmatter?.['start']);
-            const endTime = dateOrNull(item.frontmatter?.['end']);
-
-            if(!startTime || !endTime) {
-                return false;
-            }
-
-            if(startTime > dateInfo.end) {
-                return false;
-            }
-
-            if(endTime < dateInfo.start) {
-                return false;
-            }
-
-            return true;
-
-        });
+        const displayedNotes = await queryFilesAsync(
+            this.app, 
+            item => getNotesBetweenDatesQuery(item, dateInfo.start, dateInfo.end));
 
         for (let i = 0; i < displayedNotes.length; i++) {
             const note = displayedNotes[i];
