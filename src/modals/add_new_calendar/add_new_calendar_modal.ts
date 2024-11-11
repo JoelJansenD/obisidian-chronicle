@@ -1,5 +1,5 @@
 import { App, Modal, Setting } from "obsidian";
-import { ChronicleCalendar } from "../../settings/obsidian_chronicle_settings";
+import { ChronicleCalendar } from "../../settings/chronicle_settings";
 import { Guid } from "guid-typescript";
 import ChroniclePlugin from "@src/main";
 import addCalendar from "./add_calendar";

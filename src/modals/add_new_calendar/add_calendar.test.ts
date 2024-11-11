@@ -1,5 +1,5 @@
 import DEFAULT_SETTINGS from "@src/settings/default_settings";
-import { ChronicleCalendar, ChronicleSettings } from "@src/settings/obsidian_chronicle_settings";
+import { ChronicleCalendar, ChronicleSettings } from "@src/settings/chronicle_settings";
 import addCalendar from "./add_calendar";
 
 describe('addCalendar', () => {

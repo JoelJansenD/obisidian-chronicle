@@ -1,4 +1,4 @@
-import { ChronicleCalendar } from "@src/settings/obsidian_chronicle_settings";
+import { ChronicleCalendar } from "@src/settings/chronicle_settings";
 
 export default function validateCalendar(calendar: ChronicleCalendar) {
     const validationProblems: string[] = [];

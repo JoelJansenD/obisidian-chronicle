@@ -1,6 +1,6 @@
 import DEFAULT_SETTINGS from "./default_settings";
 import deleteCalendarWithId from "./delete_calendar_with_id";
-import { ChronicleSettings } from "./obsidian_chronicle_settings";
+import { ChronicleSettings } from "./chronicle_settings";
 
 describe('deleteCalendarWithId', () => {
 

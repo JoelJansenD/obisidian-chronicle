@@ -1,10 +1,10 @@
 import ChroniclePlugin from "@src/main";
 import { App, Modal, Notice, PluginSettingTab, Setting } from "obsidian";
-import { ChronicleCalendar } from "./obsidian_chronicle_settings";
+import { ChronicleCalendar } from "./chronicle_settings";
 import AddNewCalendarModal from "../modals/add_new_calendar/add_new_calendar_modal";
 import deleteCalendarWithId from "./delete_calendar_with_id";
 
-export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
+export default class ChronicleSettingsTab extends PluginSettingTab {
 
     private readonly _plugin: ChroniclePlugin;
     

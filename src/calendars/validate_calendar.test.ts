@@ -1,4 +1,4 @@
-import { ChronicleCalendar } from "@src/settings/obsidian_chronicle_settings";
+import { ChronicleCalendar } from "@src/settings/chronicle_settings";
 import validateCalendar from "./validate_calendar";
 
 describe('validateCalendar', () => {

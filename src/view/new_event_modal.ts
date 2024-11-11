@@ -1,5 +1,5 @@
 import ChroniclePlugin from "@src/main";
-import { ChronicleCalendar } from "@src/settings/obsidian_chronicle_settings";
+import { ChronicleCalendar } from "@src/settings/chronicle_settings";
 import { App, IconName, Modal, Notice, setIcon, Setting } from "obsidian";
 
 export type NewTaskModalResult = {

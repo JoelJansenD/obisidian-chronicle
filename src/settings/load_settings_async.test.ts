@@ -3,7 +3,7 @@ import { App, PluginManifest } from "obsidian";
 import TestManifest from '../__mocks__/test_manifest';
 import loadSettingsAsync from "./load_settings_async";
 import DEFAULT_SETTINGS from "./default_settings";
-import { ChronicleSettings } from "./obsidian_chronicle_settings";
+import { ChronicleSettings } from "./chronicle_settings";
 
 describe('loadSettingsAsync', () => {
     

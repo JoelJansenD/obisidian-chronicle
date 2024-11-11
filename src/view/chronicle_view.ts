@@ -10,7 +10,7 @@ import queryFilesAsync, { QueryFilesInput } from "@src/notes/query_files_async";
 import getNotesBetweenDatesQuery from "@src/queries/get_notes_between_dates_query";
 
 export const CHRONICLE_VIEW_TYPE = 'obsidia-chronicle-view';
-export default class ObsidianChronicleView extends ItemView {
+export default class ChronicleView extends ItemView {
 
     private fullCalendar: Calendar | null;
     private readonly _plugin: ChroniclePlugin;

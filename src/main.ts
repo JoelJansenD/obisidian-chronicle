@@ -1,7 +1,7 @@
 import { App, Plugin, PluginManifest } from 'obsidian';
-import ObsidianChronicleView, { CHRONICLE_VIEW_TYPE } from './view/obsidian_chronicle_view';
-import { ChronicleSettings } from './settings/obsidian_chronicle_settings';
-import ObsidianChronicleSettingsTab from './settings/obsidian_chronicle_settings_tab';
+import ChronicleView, { CHRONICLE_VIEW_TYPE } from './view/chronicle_view';
+import { ChronicleSettings } from './settings/chronicle_settings';
+import ChronicleSettingsTab from './settings/chronicle_settings_tab';
 import loadSettingsAsync from './settings/load_settings_async';
 
 export default class ChroniclePlugin extends Plugin {
@@ -18,10 +18,10 @@ export default class ChroniclePlugin extends Plugin {
     async onload() {
         // Add settings and settings view
         await this.loadSettings();
-        this.addSettingTab(new ObsidianChronicleSettingsTab(this.app, this));
+        this.addSettingTab(new ChronicleSettingsTab(this.app, this));
 
         // Add view and tab icon
-        this.registerView(CHRONICLE_VIEW_TYPE, leaf => new ObsidianChronicleView(leaf, this));        
+        this.registerView(CHRONICLE_VIEW_TYPE, leaf => new ChronicleView(leaf, this));        
         this.addRibbonIcon(
             'calendar',
             'Open chronicle',

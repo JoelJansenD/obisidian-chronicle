@@ -10,11 +10,11 @@ module.exports = {
   },
   coveragePathIgnorePatterns: [
     'src/modals/add_new_calendar/add_new_calendar_modal.ts',
-    'src/settings/obsidian_chronicle_settings_tab.ts',
-    'src/settings/obsidian_chronicle_settings.ts',
+    'src/settings/chronicle_settings_tab.ts',
+    'src/settings/chronicle_settings.ts',
     'src/view/calendar.ts',
     'src/view/new_event_modal.ts',
-    'src/view/obsidian_chronicle_view.ts',
+    'src/view/chronicle_view.ts',
     'src/main.ts',
   ]
 };
