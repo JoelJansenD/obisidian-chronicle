@@ -11,5 +11,6 @@ module.exports = {
   coveragePathIgnorePatterns: [
     'src/modals/add_new_calendar/add_new_calendar_modal.ts',
     'src/settings/obsidian_chronicle_settings_tab.ts',
+    'src/settings/obsidian_chronicle_settings.ts',
   ]
 };

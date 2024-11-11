@@ -3,7 +3,6 @@ import ObsidianChronicleView, { CHRONICLE_VIEW_TYPE } from './view/obsidian_chro
 import { ChronicleSettings } from './settings/obsidian_chronicle_settings';
 import ObsidianChronicleSettingsTab from './settings/obsidian_chronicle_settings_tab';
 import loadSettingsAsync from './settings/load_settings_async';
-import saveSettingsAsync from './settings/save_settings_async';
 
 export default class ChroniclePlugin extends Plugin {
 
@@ -59,7 +58,7 @@ export default class ChroniclePlugin extends Plugin {
     }
 
     async saveSettings() {
-        await saveSettingsAsync(this, this._settings);
+        await this.saveData(this._settings);
     }
 
 };
