@@ -1,9 +1,10 @@
 import ChroniclePlugin from "@src/main";
 import { App, Modal, Notice, PluginSettingTab, Setting } from "obsidian";
-import { ChronicleCalendar } from "./obsidian_chronicle_settings";
-import NewCalendarModal from "./new_calendar_modal";
+import { ChronicleCalendar } from "./chronicle_settings";
+import AddNewCalendarModal from "../modals/add_new_calendar/add_new_calendar_modal";
+import deleteCalendarWithId from "./delete_calendar_with_id";
 
-export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
+export default class ChronicleSettingsTab extends PluginSettingTab {
 
     private readonly _plugin: ChroniclePlugin;
     
@@ -13,16 +14,15 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
     }
     
     display(): void {
-        this.renderAsync(true);
+        // Before building the settings interface, load the current data.json into the settings
+        // If we don't do this, any unsaved changes remain in the settings object, requireing a reload in Obsidian
+        this._plugin.loadSettings()
+        .then(() => {
+            this.renderAsync();
+        })
     }
 
-    private async renderAsync(firstRender: boolean) {
-        if(firstRender) {
-            // Before building the settings interface, load the current data.json into the settings
-            // If we don't do this, any unsaved changes remain in the settings object, requireing a reload in Obsidian
-            await this._plugin.loadSettings();
-        }
-
+    private async renderAsync() {
         const containerEl = this.containerEl;
 
         containerEl.empty();
@@ -38,7 +38,7 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
             //     .addOption('2', 'Option 2'))
             .addButton(cb => cb
                 .setIcon('plus')
-                .onClick(_ => new NewCalendarModal(this.app, this._plugin, r => this.onAddCalendar(r)).open()));
+                .onClick(_ => new AddNewCalendarModal(this.app, this._plugin, r => this.onAddCalendar(r)).open()));
         this._plugin.settings.calendars.forEach(c => this.addCalendarConfigurationRow(c, containerEl)); 
 
         new Setting(containerEl)
@@ -46,7 +46,7 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
                 .setButtonText('Save changes')
                 .setCta()
                 .onClick(async () => {
-                    await this.onSaveAsync();
+                    await this._plugin.saveData(this._plugin.settings);
                     new Notice('Settings saved successfully!');
                 })
             )
@@ -88,20 +88,11 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
         setting.infoEl.remove();
     }
 
-    private onAddCalendar(result: ChronicleCalendar) {
-        this._plugin.settings.calendars.push(result);
-        this.renderAsync(false);
+    private onAddCalendar(_: ChronicleCalendar) {
+        this.renderAsync();
     }
 
     private onDeleteCalendar(calendar: ChronicleCalendar) {
-        const calendarIndex = this._plugin.settings.calendars.findIndex(x => x.id === calendar.id);
-        if(calendarIndex === -1) {
-            const modal = new Modal(this.app).setContent(`The calendar '${ calendar.name || calendar.directory }' could not be found.`);
-                new Setting(modal.contentEl).addButton(btn => btn.setButtonText('Close').setWarning().onClick(() => modal.close));
-                modal.open();
-            return;
-        }
-
         const confirmationModal = new Modal(this.app);
         confirmationModal.setTitle(`Delete calendar ${ calendar.name || calendar.directory }`);
         confirmationModal.setContent('Are you sure you want to delete this calendar? Once your changes have been saved, they cannot be reverted!');
@@ -110,16 +101,20 @@ export default class ObsidianChronicleSettingsTab extends PluginSettingTab {
                 .setButtonText('Delete')
                 .setWarning()
                 .onClick(() => {
-                    this._plugin.settings.calendars.splice(calendarIndex, 1);
-                    this.renderAsync(false);
-                    confirmationModal.close();
+                    try {
+                        deleteCalendarWithId(this._plugin.settings, calendar.id);
+                        this.renderAsync();
+                        confirmationModal.close();
+                    }
+                    catch(e) {
+                        const modal = new Modal(this.app).setContent(e);
+                        new Setting(modal.contentEl).addButton(btn => btn.setButtonText('Close').setWarning().onClick(() => modal.close));
+                        modal.open();
+                        return;
+                    }
                 })
             );
         confirmationModal.open();
-    }
-
-    private async onSaveAsync() {
-        await this._plugin.saveData(this._plugin.settings);
     }
 
 }

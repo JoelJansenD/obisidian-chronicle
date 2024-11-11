@@ -1,9 +1,11 @@
 import { App, Modal, Setting } from "obsidian";
-import { ChronicleCalendar } from "./obsidian_chronicle_settings";
+import { ChronicleCalendar } from "../../settings/chronicle_settings";
 import { Guid } from "guid-typescript";
 import ChroniclePlugin from "@src/main";
+import addCalendar from "./add_calendar";
+import getFoldersExcludingPaths from "@src/notes/get_folders_excluding_paths";
 
-export default class NewCalendarModal extends Modal {
+export default class AddNewCalendarModal extends Modal {
 
     private readonly _app: App;
     private readonly _plugin: ChroniclePlugin;
@@ -27,8 +29,9 @@ export default class NewCalendarModal extends Modal {
                 .setButtonText('Add new calendar')
                 .setCta()
                 .onClick(() => {
-                    const validationResult = this.validate();
-                    if(validationResult.length > 0) {
+                    const newCalendar = { id: Guid.raw(), name: this.name, directory: this.directory, colour: this.colour };
+                    const validationResult = addCalendar(this._plugin.settings, newCalendar);
+                    if(validationResult && validationResult.length > 0) {
                         // Display all validation errors in a new dialog
                         const modal = new Modal(app).setContent(validationResult.join('\r\n'));
                         new Setting(modal.contentEl).addButton(btn => btn.setButtonText('Close').setWarning().onClick(() => modal.close));
@@ -37,7 +40,7 @@ export default class NewCalendarModal extends Modal {
                     }
 
                     // The result can be submitted once it has passed validation
-                    onSubmit({ id: Guid.raw(), name: this.name, directory: this.directory, colour: this.colour });
+                    onSubmit(newCalendar);
                     this.close();
                 }));
     }
@@ -59,17 +62,8 @@ export default class NewCalendarModal extends Modal {
 
     private buildDirectorySelectorField() {
         const claimedFolders = this._plugin.settings.calendars.map(x => x.directory);
-
-        const folders = this._app.vault.getAllFolders();
-        const options = {} as Record<string, string>;
-        folders.forEach(f => {
-            // If the folder has already been claimed by another calendar, don't add it to the list of options
-            if(claimedFolders.contains(f.path)) {
-                return;
-            }
-
-            options[f.path] = f.path
-        });
+        const unclaimedFolders = getFoldersExcludingPaths(this.app.vault, claimedFolders);
+        const options = Object.fromEntries(unclaimedFolders.map(x => [x.path, x.path]));
 
         new Setting(this.contentEl)
             .setName('Directory')
@@ -84,13 +78,5 @@ export default class NewCalendarModal extends Modal {
                 const selectEl = dropdown.selectEl;
                 selectEl.querySelector('option[value=""]')?.setAttrs({ 'disabled': true, 'hidden': true });
             });
-    }
-
-    private validate() {
-        const errors: string[] = [];
-        if(!this.directory) {
-            errors.push('You must select a directory to store notes');
-        }
-        return errors;
     }
 }

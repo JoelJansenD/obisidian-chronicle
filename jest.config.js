@@ -8,4 +8,13 @@ module.exports = {
     '^@src/(.*)$': '<rootDir>/src/$1', // Example alias: import { xyz } from '@src/xyz' maps to /src/xyz.ts
     '^obsidian$': 'src/__mocks__/obsidian.ts',
   },
+  coveragePathIgnorePatterns: [
+    'src/modals/add_new_calendar/add_new_calendar_modal.ts',
+    'src/settings/chronicle_settings_tab.ts',
+    'src/settings/chronicle_settings.ts',
+    'src/view/calendar.ts',
+    'src/view/new_event_modal.ts',
+    'src/view/chronicle_view.ts',
+    'src/main.ts',
+  ]
 };
