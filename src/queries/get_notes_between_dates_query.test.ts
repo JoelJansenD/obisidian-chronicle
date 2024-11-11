@@ -4,6 +4,41 @@ import { TFile } from "obsidian";
 
 const HOUR_IN_MILLIS = 3_600_000;
 describe('getNotesBetweenDatesQuery', () => {
+    test.each([[new Date(), undefined], [undefined, new Date()]])
+    ('returns false when the query input has no start or end', (startInput?: Date, endInput?: Date) => {
+        // Arrange
+        const query: QueryFilesInput = { 
+            file: new TFile(), 
+            frontmatter: { 
+                start: startInput,
+                end: endInput
+            }
+        };
+
+        const start = new Date(Date.now() - (HOUR_IN_MILLIS * 8));
+        const end = new Date(Date.now() - (HOUR_IN_MILLIS * 7));
+
+        // Act
+        const result = getNotesBetweenDatesQuery(query, start, end);
+
+        // Assert
+        expect(result).toBe(false);
+    });
+
+    it('returns false when no input has no frontmatter', () => {
+        // Arrange
+        const query: QueryFilesInput = { 
+            file: new TFile(), 
+            frontmatter: null
+        };
+
+        // Act
+        const result = getNotesBetweenDatesQuery(query, new Date(), new Date());
+
+        // Assert
+        expect(result).toBe(false);
+    });
+
     it('returns false when event end lies before query start date', () => {
         // Arrange
         const query: QueryFilesInput = { 
@@ -31,27 +66,6 @@ describe('getNotesBetweenDatesQuery', () => {
             frontmatter: { 
                 start: new Date(),
                 end: new Date(Date.now() + (HOUR_IN_MILLIS)),
-            }
-        };
-
-        const start = new Date(Date.now() - (HOUR_IN_MILLIS * 8));
-        const end = new Date(Date.now() - (HOUR_IN_MILLIS * 7));
-
-        // Act
-        const result = getNotesBetweenDatesQuery(query, start, end);
-
-        // Assert
-        expect(result).toBe(false);
-    });
-
-    test.each([[new Date(), undefined], [undefined, new Date()]])
-    ('returns false when the query input has no start or end', (startInput?: Date, endInput?: Date) => {
-        // Arrange
-        const query: QueryFilesInput = { 
-            file: new TFile(), 
-            frontmatter: { 
-                start: startInput,
-                end: endInput
             }
         };
 

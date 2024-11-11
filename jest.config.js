@@ -13,5 +13,7 @@ module.exports = {
     'src/settings/obsidian_chronicle_settings_tab.ts',
     'src/settings/obsidian_chronicle_settings.ts',
     'src/view/calendar.ts',
+    'src/view/new_event_modal.ts',
+    'src/view/obsidian_chronicle_view.ts',
   ]
 };
