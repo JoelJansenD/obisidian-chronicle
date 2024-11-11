@@ -8,8 +8,6 @@ export default class ChronicleSettingsTab extends PluginSettingTab {
 
     private readonly _plugin: ChroniclePlugin;
 
-    private newCalendarType: CalendarType;
-    
     constructor(app: App, plugin: ChroniclePlugin) {
         super(app, plugin);
         this._plugin = plugin;
@@ -34,11 +32,6 @@ export default class ChronicleSettingsTab extends PluginSettingTab {
         new Setting(containerEl)
             .setName('Calendars')
             .setDesc('Add calendar')
-            // Re-enable the dropdown when multiple calendar implementations are available
-            .addDropdown(cb => cb
-                .addOption('full', 'Full Notes')
-                .addOption('daily', 'Daily Notes')
-                .onChange((val: CalendarType) => this.newCalendarType = val))
             .addButton(cb => cb
                 .setIcon('plus')
                 .onClick(_ => new AddNewCalendarModal(this.app, this._plugin, r => this.onAddCalendar(r)).open()));

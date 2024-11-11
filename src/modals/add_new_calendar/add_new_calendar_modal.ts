@@ -1,5 +1,5 @@
 import { App, Modal, Setting } from "obsidian";
-import { ChronicleCalendar } from "../../settings/chronicle_settings";
+import { CalendarType, ChronicleCalendar } from "../../settings/chronicle_settings";
 import { Guid } from "guid-typescript";
 import ChroniclePlugin from "@src/main";
 import addCalendar from "./add_calendar";
@@ -13,6 +13,7 @@ export default class AddNewCalendarModal extends Modal {
     private name: string;
     private directory: string;
     private colour: string = '#d2122e';
+    private type: CalendarType;
 
     constructor(app: App, plugin: ChroniclePlugin, onSubmit: (result: ChronicleCalendar) => void) {
         super(app);
@@ -21,6 +22,7 @@ export default class AddNewCalendarModal extends Modal {
         
         this.setTitle('New Calendar');
         this.buildNameField();
+        this.buildCalendarTypeSelectorField();
         this.buildDirectorySelectorField();
         this.buildColourPicker();
 
@@ -49,6 +51,26 @@ export default class AddNewCalendarModal extends Modal {
                     onSubmit(newCalendar);
                     this.close();
                 }));
+    }
+
+    private buildCalendarTypeSelectorField() {
+        new Setting(this.contentEl)
+            .setName('Type')
+            .addDropdown(dropdown => {
+                const options: { [key in CalendarType]: string } = {
+                    'full': 'Full Calendar',
+                    'daily': 'Daily Calendar',
+                };
+
+                dropdown
+                    .addOption('', 'Select a type') // This option will be hidden later, so it serves as a placeholder
+                    .addOptions(options)
+                    .onChange((val: CalendarType) => this.type = val);
+
+                // Hide the placeholder option, telling users that they need to select a value
+                const selectEl = dropdown.selectEl;
+                selectEl.querySelector('option[value=""]')?.setAttrs({ 'disabled': true, 'hidden': true });
+            });
     }
 
     private buildColourPicker() {

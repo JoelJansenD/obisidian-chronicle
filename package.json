@@ -5,6 +5,7 @@
 	"main": "main.js",
 	"scripts": {
 		"test": "jest --coverage",
+		"testWatch": "jest --watch --coverage",
 		"testAll": "jest --watchAll --coverage --collectCoverageFrom='src/**/*.ts'",
 		"dev": "node esbuild.config.mjs",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
