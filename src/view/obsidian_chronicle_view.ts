@@ -92,7 +92,6 @@ export default class ObsidianChronicleView extends ItemView {
     start: ${ args.start.toISOString() }
     end: ${args.end.toISOString() }
     ---`;
-
                     await this.app.vault.create(`${result.calendar.directory}/${result.title}.md`, content);
                     return true;
                 }
