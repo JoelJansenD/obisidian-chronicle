@@ -9,6 +9,7 @@ export default class AddNewCalendarModal extends Modal {
 
     private readonly _app: App;
     private readonly _plugin: ChroniclePlugin;
+    private readonly _onSubmit: (result: ChronicleCalendar) => void;
 
     private name: string;
     private directory: string;
@@ -19,38 +20,18 @@ export default class AddNewCalendarModal extends Modal {
         super(app);
         this._app = app;
         this._plugin = plugin;
+        this._onSubmit = onSubmit;
         
+        this.render();
+    }
+
+    private render() {
         this.setTitle('New Calendar');
         this.buildNameField();
         this.buildCalendarTypeSelectorField();
-        this.buildDirectorySelectorField();
+        this.buildTypeSpecificFields();
         this.buildColourPicker();
-
-        new Setting(this.contentEl)
-            .addButton(btn => btn
-                .setButtonText('Add new calendar')
-                .setCta()
-                .onClick(() => {
-                    const newCalendar: ChronicleCalendar = { 
-                        id: Guid.raw(), 
-                        name: this.name, 
-                        directory: this.directory, 
-                        colour: this.colour,
-                        type: 'full'
-                    };
-                    const validationResult = addCalendar(this._plugin.settings, newCalendar);
-                    if(validationResult && validationResult.length > 0) {
-                        // Display all validation errors in a new dialog
-                        const modal = new Modal(app).setContent(validationResult.join('\r\n'));
-                        new Setting(modal.contentEl).addButton(btn => btn.setButtonText('Close').setWarning().onClick(() => modal.close));
-                        modal.open();
-                        return;
-                    }
-
-                    // The result can be submitted once it has passed validation
-                    onSubmit(newCalendar);
-                    this.close();
-                }));
+        this.buildSubmissionRow();
     }
 
     private buildCalendarTypeSelectorField() {
@@ -81,13 +62,6 @@ export default class AddNewCalendarModal extends Modal {
                 .onChange(val => this.colour = val));
     }
 
-    private buildNameField() {
-        new Setting(this.contentEl)
-            .setName('Name')
-            .addText(text => text
-                .onChange(val => this.name = val));
-    }
-
     private buildDirectorySelectorField() {
         const claimedFolders = this._plugin.settings.calendars.map(x => x.directory);
         const unclaimedFolders = getFoldersExcludingPaths(this.app.vault, claimedFolders);
@@ -106,5 +80,57 @@ export default class AddNewCalendarModal extends Modal {
                 const selectEl = dropdown.selectEl;
                 selectEl.querySelector('option[value=""]')?.setAttrs({ 'disabled': true, 'hidden': true });
             });
+    }
+
+    private buildHeaderSelectorField() {
+
+    }
+
+    private buildNameField() {
+        new Setting(this.contentEl)
+            .setName('Name')
+            .addText(text => text
+                .onChange(val => this.name = val));
+    }
+
+    private buildSubmissionRow() {
+        new Setting(this.contentEl)
+            .addButton(btn => btn
+                .setButtonText('Add new calendar')
+                .setCta()
+                .onClick(this.onSubmissionClick));
+    }
+    
+    private buildTypeSpecificFields() {
+        switch(this.type) {
+            case "full":
+                this.buildDirectorySelectorField();
+                break;
+            case "daily":
+                this.buildHeaderSelectorField();
+                break;
+        }
+    }
+
+    private onSubmissionClick() {
+        const newCalendar: ChronicleCalendar = { 
+            id: Guid.raw(), 
+            name: this.name, 
+            directory: this.directory, 
+            colour: this.colour,
+            type: this.type
+        };
+        const validationResult = addCalendar(this._plugin.settings, newCalendar);
+        if(validationResult && validationResult.length > 0) {
+            // Display all validation errors in a new dialog
+            const modal = new Modal(this._app).setContent(validationResult.join('\r\n'));
+            new Setting(modal.contentEl).addButton(btn => btn.setButtonText('Close').setWarning().onClick(() => modal.close));
+            modal.open();
+            return;
+        }
+
+        // The result can be submitted once it has passed validation
+        this._onSubmit(newCalendar);
+        this.close();
     }
 }
