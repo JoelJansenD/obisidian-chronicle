@@ -3,10 +3,10 @@ import validateCalendar from "./validate_calendar";
 
 describe('validateCalendar', () => {
     const validCalendars: ChronicleCalendar[] = [
-        { id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', name: 'calendar', colour: '#ffffff', directory: '/' },
-        { id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', name: '', colour: '#ffffff', directory: '/' },
-        { id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', name: 'calendar', colour: '', directory: '/' },
-        { id: '', name: 'calendar', colour: '#ffffff', directory: '/' },
+        { id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', name: 'calendar', colour: '#ffffff', directory: '/', type: 'full' },
+        { id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', name: '', colour: '#ffffff', directory: '/', type: 'full' },
+        { id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', name: 'calendar', colour: '', directory: '/', type: 'full' },
+        { id: '', name: 'calendar', colour: '#ffffff', directory: '/', type: 'full' },
     ];
 
     test.each(validCalendars)('returns no validation problems when the calendar is valid', (calendar: ChronicleCalendar) => {
@@ -19,7 +19,13 @@ describe('validateCalendar', () => {
 
     it('returns a validation problem when the directory is empty', () => {
         // Arrange
-        const calendar = { id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', name: 'calendar', colour: '#ffffff', directory: '' };
+        const calendar: ChronicleCalendar  = {
+            id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 
+            name: 'calendar', 
+            colour: '#ffffff', 
+            directory: '',
+            type: 'full'
+        };
         
         // Act
         const result = validateCalendar(calendar);

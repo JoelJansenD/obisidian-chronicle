@@ -1,15 +1,16 @@
+import { ChronicleCalendar, ChronicleSettings } from '@src/settings/chronicle_settings';
 import { getCalendarById } from './get_calendar_by_id';
 import { Guid } from 'guid-typescript';
 
 describe('getCalendarById', () => {
     it('should return the calendar with the given id', () => {
         // Arrange
-        const target = { id: Guid.raw(), name: 'target', colour: '#ffffff', directory: '' }
-        const config = { 
+        const target: ChronicleCalendar = { id: Guid.raw(), name: 'target', colour: '#ffffff', directory: '', type: 'full' }
+        const config: ChronicleSettings = { 
             calendars: [
-                { id: Guid.raw(), name: 'target', colour: '#ffffff', directory: '' },
+                { id: Guid.raw(), name: 'target', colour: '#ffffff', directory: '', type: 'full' },
                 target,
-                { id: Guid.raw(), name: 'target', colour: '#ffffff', directory: '' }
+                { id: Guid.raw(), name: 'target', colour: '#ffffff', directory: '', type: 'full' }
             ]
         };
 
@@ -22,10 +23,10 @@ describe('getCalendarById', () => {
     
     it('should return null when no calendar is found', () => {
         // Arrange
-        const config = { 
+        const config: ChronicleSettings = { 
             calendars: [
-                { id: Guid.raw(), name: 'target', colour: '#ffffff', directory: '' },
-                { id: Guid.raw(), name: 'target', colour: '#ffffff', directory: '' }
+                { id: Guid.raw(), name: 'target', colour: '#ffffff', directory: '', type: 'full' },
+                { id: Guid.raw(), name: 'target', colour: '#ffffff', directory: '', type: 'full' }
             ]
         };
 

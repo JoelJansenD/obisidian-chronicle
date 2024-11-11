@@ -23,7 +23,7 @@ describe('loadSettingsAsync', () => {
         // Arrange
         const mockInput = new MockInput();
         mockInput.settings = {
-            calendars: [ { id: 'aaaaaaaa-aaaa-aaaa-aaaaaaaaaaaa', name: 'test', colour: '#ffffff', directory: '' } ]
+            calendars: [ { id: 'aaaaaaaa-aaaa-aaaa-aaaaaaaaaaaa', name: 'test', colour: '#ffffff', directory: '', type: 'full' } ]
         };
         const mocks = new Mocks(mockInput);
 

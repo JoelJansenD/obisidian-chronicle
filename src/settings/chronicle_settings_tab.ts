@@ -1,12 +1,14 @@
 import ChroniclePlugin from "@src/main";
 import { App, Modal, Notice, PluginSettingTab, Setting } from "obsidian";
-import { ChronicleCalendar } from "./chronicle_settings";
+import { CalendarType, ChronicleCalendar } from "./chronicle_settings";
 import AddNewCalendarModal from "../modals/add_new_calendar/add_new_calendar_modal";
 import deleteCalendarWithId from "./delete_calendar_with_id";
 
 export default class ChronicleSettingsTab extends PluginSettingTab {
 
     private readonly _plugin: ChroniclePlugin;
+
+    private newCalendarType: CalendarType;
     
     constructor(app: App, plugin: ChroniclePlugin) {
         super(app, plugin);
@@ -34,8 +36,9 @@ export default class ChronicleSettingsTab extends PluginSettingTab {
             .setDesc('Add calendar')
             // Re-enable the dropdown when multiple calendar implementations are available
             .addDropdown(cb => cb
-                .addOption('1', 'Option 1')
-                .addOption('2', 'Option 2'))
+                .addOption('full', 'Full Notes')
+                .addOption('daily', 'Daily Notes')
+                .onChange((val: CalendarType) => this.newCalendarType = val))
             .addButton(cb => cb
                 .setIcon('plus')
                 .onClick(_ => new AddNewCalendarModal(this.app, this._plugin, r => this.onAddCalendar(r)).open()));

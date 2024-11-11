@@ -7,4 +7,7 @@ export type ChronicleCalendar = {
     name: string;
     directory: string;
     colour: string;
+    type: CalendarType;
 }
+
+export type CalendarType = 'full' | 'daily';

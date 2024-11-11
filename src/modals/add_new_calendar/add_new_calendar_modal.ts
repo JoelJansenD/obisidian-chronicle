@@ -29,7 +29,13 @@ export default class AddNewCalendarModal extends Modal {
                 .setButtonText('Add new calendar')
                 .setCta()
                 .onClick(() => {
-                    const newCalendar = { id: Guid.raw(), name: this.name, directory: this.directory, colour: this.colour };
+                    const newCalendar: ChronicleCalendar = { 
+                        id: Guid.raw(), 
+                        name: this.name, 
+                        directory: this.directory, 
+                        colour: this.colour,
+                        type: 'full'
+                    };
                     const validationResult = addCalendar(this._plugin.settings, newCalendar);
                     if(validationResult && validationResult.length > 0) {
                         // Display all validation errors in a new dialog

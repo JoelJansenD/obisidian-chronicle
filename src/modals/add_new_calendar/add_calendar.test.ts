@@ -13,7 +13,13 @@ describe('addCalendar', () => {
 
     it('stores a valid calendar in the given settings object', () => {
         // Arrange
-        const newCalendar: ChronicleCalendar = { id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', name: 'calendar', colour: '#ffffff', directory: '/' };
+        const newCalendar: ChronicleCalendar = { 
+            id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 
+            name: 'calendar', 
+            colour: '#ffffff', 
+            directory: '/' ,
+            type: 'full'
+        };
 
         // Act & Assert
         expect(addCalendar(settings, newCalendar)).toBeFalsy();
@@ -23,11 +29,20 @@ describe('addCalendar', () => {
     
     it('returns all validation problems when given an invalid object', () => {
         // Arrange
-        const newCalendar: ChronicleCalendar = { id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', name: 'calendar', colour: '#ffffff', directory: '' };
-        debugger;
+        const newCalendar: ChronicleCalendar = { 
+            id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 
+            name: 'calendar', 
+            colour: '#ffffff', 
+            directory: '' ,
+            type: 'full'
+        };
 
-        // Act & Assert
-        expect(addCalendar(settings, newCalendar)).toBeTruthy();
+        // Act 
+        const result = addCalendar(settings, newCalendar);
+
+        // Assert
+        expect(result).toHaveLength(1);
+        expect(result![0]).toBe('You must select a directory to store notes');
         expect(settings.calendars).toHaveLength(0);
     });
 });
