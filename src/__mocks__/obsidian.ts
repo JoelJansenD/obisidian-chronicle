@@ -1,6 +1,7 @@
 export class App {
-    vault = new Vault();
+    internalPlugins = new Plugins();
     metadataCache = new MetadataCache();
+    vault = new Vault();
 }
 
 export class CachedMetadata {
@@ -31,6 +32,10 @@ export class TFolder {
 
 export class Plugin {
     loadData = jest.fn();
+}
+
+export class Plugins {
+    plugins: {[key: string]: Plugin};
 }
 
 export class PluginSettingTab {
