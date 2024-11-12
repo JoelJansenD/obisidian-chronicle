@@ -43,6 +43,9 @@
 		"@fullcalendar/rrule": "6.1.15",
 		"@fullcalendar/timegrid": "6.1.15",
 		"guid-typescript": "1.0.9",
-		"obsidian-sample-plugin": "file:"
+		"obsidian-sample-plugin": "file:",
+		"remark": "^15.0.1",
+		"remark-parse": "^11.0.0",
+		"unified": "^11.0.5"
 	}
 }
