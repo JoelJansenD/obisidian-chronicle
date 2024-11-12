@@ -31,11 +31,16 @@ export class TFolder {
 }
 
 export class Plugin {
+    enabled = true;
     loadData = jest.fn();
+    instance = {
+        options: { }
+    }
 }
 
 export class Plugins {
     plugins: {[key: string]: Plugin};
+    getPluginById = jest.fn();
 }
 
 export class PluginSettingTab {
@@ -45,6 +50,7 @@ export class PluginSettingTab {
 export class Vault {
     getAllFolders = jest.fn();
     getMarkdownFiles = jest.fn();
+    getFileByPath = jest.fn();
     getFiles = jest.fn();
     read = jest.fn();
     writeFile = jest.fn();
