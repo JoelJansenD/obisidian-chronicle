@@ -20,6 +20,21 @@ describe('getDailyNotesTemplate', () => {
         expect(spies.getFileByPathSpy).toHaveBeenCalledTimes(1);
     });
     
+    it('returns null if no daily notes was not found', async () => {
+        // Arrange
+        const mockInput = new MockInput();
+        const mocks = new Mocks(mockInput);
+        const spies = new Spies(mocks);
+        
+        // Act
+        const dailyNotesTemplate = await getDailyNotesTemplateAsync(mocks.app);
+
+        // Assert
+        expect(dailyNotesTemplate).toBeNull();
+        expect(spies.getPluginByIdSpy).toHaveBeenCalledTimes(1);
+        expect(spies.getFileByPathSpy).toHaveBeenCalledTimes(0);
+    });
+    
     it('returns null if the plugin is disabled', async () => {
         // Arrange
         const mockInput = new MockInput();
