@@ -77,7 +77,7 @@ export default class ChronicleView extends ItemView {
             borderColor: result.calendar.colour
         };
         createEvent(args.view.calendar, event);
-        await createNoteForEventAsync(result.calendar, result.title, { start: args.start, end: args.end });
+        await createNoteForEventAsync(this.app, result.calendar, result.title, { start: args.start, end: args.end });
         return true;
     }
 

@@ -48,6 +48,7 @@ export class PluginSettingTab {
 }
 
 export class Vault {
+    create = jest.fn();
     getAllFolders = jest.fn();
     getMarkdownFiles = jest.fn();
     getFileByPath = jest.fn();
