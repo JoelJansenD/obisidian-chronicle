@@ -1,7 +1,7 @@
 import { ItemView, Notice, WorkspaceLeaf } from "obsidian";
 import { renderCalendar } from './calendar';
 import { Calendar, DateSelectArg, DatesSetArg, EventApi, EventClickArg, EventHoveringArg, EventInput } from "@fullcalendar/core";
-import NewEventModal from "./new_event_modal";
+import NewEventModal, { NewTaskModalResult } from "./new_event_modal";
 import ChroniclePlugin from "@src/main";
 import { replaceLastOccurance } from "@src/utils/string_utils";
 import { createEvent } from "@src/events/events";
@@ -62,6 +62,30 @@ export default class ChronicleView extends ItemView {
         return false;
     }
 
+    async onDateSavedAsync(result: NewTaskModalResult, args: DateSelectArg) {
+        if(!result.title) {
+            return false;
+        }
+
+        const event: EventInput = {
+            title: result.title,
+            start: args.start,
+            end: args.end,
+            allDay: args.allDay,
+            backgroundColor: result.calendar.colour,
+            borderColor: result.calendar.colour
+        };
+        createEvent(args.view.calendar, event);
+
+        let content = `---
+calendarId: ${ result.calendar.id }
+start: ${ args.start.toISOString() }
+end: ${args.end.toISOString() }
+---`;
+        await this.app.vault.create(`${(result.calendar as ChronicleFullCalendar).directory}/${result.title}.md`, content);
+        return true;
+    }
+
     async openContextMenuForEvent(e: EventApi, mouseEvent: MouseEvent) {
         console.log('openContextMenuForEvent')
         console.log(e)
@@ -73,29 +97,7 @@ export default class ChronicleView extends ItemView {
             const modal = new NewEventModal(this.app, this._plugin, { 
                 start: args.start, 
                 end: args.end,
-                onSaveAsync: async (result) => {
-                    if(!result.title) {
-                        return false;
-                    }
-
-                    const event: EventInput = {
-                        title: result.title,
-                        start: args.start,
-                        end: args.end,
-                        allDay: args.allDay,
-                        backgroundColor: result.calendar.colour,
-                        borderColor: result.calendar.colour
-                    };
-                    createEvent(args.view.calendar, event);
-
-                    let content = `---
-    calendarId: ${ result.calendar.id }
-    start: ${ args.start.toISOString() }
-    end: ${args.end.toISOString() }
-    ---`;
-                    await this.app.vault.create(`${(result.calendar as ChronicleFullCalendar).directory}/${result.title}.md`, content);
-                    return true;
-                }
+                onSaveAsync: async (result) => await this.onDateSavedAsync(result, args)
             });
             modal.open();
         }
