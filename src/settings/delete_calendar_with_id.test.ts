@@ -10,8 +10,8 @@ describe('deleteCalendarWithId', () => {
         settings = { 
             ...DEFAULT_SETTINGS, 
             calendars: [ 
-                { id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', name: 'calendar', colour: '#ffffff', directory: 'test', type: 'full' } as ChronicleFullCalendar,
-                { id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', name: 'calendar2', colour: '#ffffff', directory: 'test2', type: 'full' } as ChronicleFullCalendar,
+                { id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', name: 'calendar', colour: '#ffffff', type: 'full' },
+                { id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', name: 'calendar2', colour: '#ffffff', type: 'full' },
             ]
         };
     });

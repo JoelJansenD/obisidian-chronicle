@@ -96,7 +96,7 @@ export default class ChronicleSettingsTab extends PluginSettingTab {
 
     private onDeleteCalendar(calendar: ChronicleCalendar) {
         const confirmationModal = new Modal(this.app);
-        confirmationModal.setTitle(`Delete calendar ${ calendar.name || (calendar as ChronicleFullCalendar).directory }`);
+        confirmationModal.setTitle(`Delete calendar ${ this.getCalendarLabel(calendar) }`);
         confirmationModal.setContent('Are you sure you want to delete this calendar? Once your changes have been saved, they cannot be reverted!');
         new Setting(confirmationModal.contentEl)
             .addButton(btn => btn
@@ -117,6 +117,19 @@ export default class ChronicleSettingsTab extends PluginSettingTab {
                 })
             );
         confirmationModal.open();
+    }
+
+    private getCalendarLabel(calendar: ChronicleCalendar) {
+        switch(calendar.type) {
+            case 'full':
+                const fullCalendar = calendar as ChronicleFullCalendar;
+                return fullCalendar.name || fullCalendar.directory;
+            case 'daily':
+                const dailyCalendar = calendar as ChronicleDailyCalendar;
+                return dailyCalendar.name || dailyCalendar.header;
+            default:
+                throw `Calendar type '${calendar.type}' is not supported`;
+        }
     }
 
 }

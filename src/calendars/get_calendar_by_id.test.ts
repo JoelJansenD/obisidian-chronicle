@@ -26,8 +26,8 @@ describe('getCalendarById', () => {
         // Arrange
         const config: ChronicleSettings = { 
             calendars: [
-                { id: Guid.raw(), name: 'target', colour: '#ffffff', directory: '', type: 'full' } as ChronicleFullCalendar,
-                { id: Guid.raw(), name: 'target', colour: '#ffffff', directory: '', type: 'full' } as ChronicleFullCalendar
+                { id: Guid.raw(), name: 'target', colour: '#ffffff', type: 'full' },
+                { id: Guid.raw(), name: 'target', colour: '#ffffff', type: 'full' }
             ]
         };
 
