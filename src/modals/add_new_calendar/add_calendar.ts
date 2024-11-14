@@ -1,4 +1,4 @@
-import { ChronicleCalendar, ChronicleCalendarType, ChronicleFullCalendar } from "@src/calendars/chronicle_calendar";
+import { ChronicleCalendar, ChronicleCalendarType, ChronicleDailyCalendar, ChronicleFullCalendar } from "@src/calendars/chronicle_calendar";
 import { ChronicleSettings } from "@src/settings/chronicle_settings";
 
 export default function addCalendar(settings: ChronicleSettings, newCalendar: CreateCalendarDto) {
@@ -8,52 +8,53 @@ export default function addCalendar(settings: ChronicleSettings, newCalendar: Cr
 }
 
 function createCalendar(newCalendar: CreateCalendarDto) : ChronicleCalendar {
-    if(newCalendar.type === '') {
-        throw "";
-    }
-
-    const baseCalendar: ChronicleCalendar = {
-        id: newCalendar.id,
-        colour: newCalendar.colour,
-        name: newCalendar.name.trim(),
-        type: newCalendar.type
-    };
-
-    switch(baseCalendar.type) {
+        switch(newCalendar.type) {
         case "full":
-            return createFullCalendar(baseCalendar, newCalendar);
+            return createFullCalendar(newCalendar);
         case "daily":
-            return createDailyCalendar(baseCalendar, newCalendar);
+            return createDailyCalendar(newCalendar);
         default:
             throw `Calendar type '${newCalendar.type}' is not supported`;
     }
 }
 
-function createFullCalendar(baseCalendar: ChronicleCalendar, newCalendar: CreateCalendarDto) {
-    if((newCalendar.directory?.trim() ?? '') === '') {
-        throw `Directory must have a value for full calendars`;
+function createBaseCalendar(newCalendar: CreateCalendarDto) : ChronicleCalendar {
+    return {
+        id: newCalendar.id,
+        name: newCalendar.name,
+        colour: newCalendar.colour,
+        // We can assume that the type is correct, since we validate in createCalendar()
+        type: newCalendar.type as ChronicleCalendarType
     }
-
-    const calendar: ChronicleFullCalendar = {
-        ...baseCalendar,
-        directory: newCalendar.directory!,
-        type: 'full'
-    };
-    return calendar;
 }
 
-function createDailyCalendar(baseCalendar: ChronicleCalendar, newCalendar: CreateCalendarDto) {
+function createDailyCalendar(newCalendar: CreateCalendarDto) {
     if((newCalendar.header?.trim() ?? '') === '') {
         throw `Header must have a value for daily calendars`;
     }
 
+    const baseCalendar = createBaseCalendar(newCalendar);
+    const calendar: ChronicleDailyCalendar = {
+        ...baseCalendar,
+        header: newCalendar.header!,
+        type: 'daily'
+    };
+    return calendar;
+
+}
+
+function createFullCalendar( newCalendar: CreateCalendarDto) {
+    if((newCalendar.directory?.trim() ?? '') === '') {
+        throw `Directory must have a value for full calendars`;
+    }
+
+    const baseCalendar = createBaseCalendar(newCalendar);
     const calendar: ChronicleFullCalendar = {
         ...baseCalendar,
         directory: newCalendar.directory!,
         type: 'full'
     };
     return calendar;
-
 }
 
 export type CreateCalendarDto = {

@@ -20,6 +20,7 @@ export class ChronicleDailyCalendar implements ChronicleCalendar {
     colour: string;
     
     readonly type = 'daily';
+    header: string;
 }
 
 export type ChronicleCalendarType = 'full' | 'daily';
