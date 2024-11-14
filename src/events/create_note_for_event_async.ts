@@ -10,7 +10,7 @@ export default async function createNoteForEventAsync(app: App, calendar: Chroni
             await createDailyNoteForEventAsync(app, calendar as ChronicleDailyCalendar, title, span);
             break;
         default:
-            throw `Calendar type '' is not supported ${calendar.type}`;
+            throw `Calendar type '${calendar.type}' is not supported`;
     }
 }
 
@@ -24,5 +24,5 @@ async function createFullNoteForEventAsync(app: App, calendar: ChronicleFullCale
     start: ${ span.start.toISOString() }
     end: ${span.end.toISOString() }
     ---`;
-    await app.vault.create(`${(calendar as ChronicleFullCalendar).directory}/${title}.md`, content);
+    await app.vault.create(`${calendar.directory}/${title}.md`, content);
 }
