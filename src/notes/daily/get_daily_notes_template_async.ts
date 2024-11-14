@@ -1,15 +1,16 @@
 import { App } from "obsidian";
 import readFileAsync from "../read_file_async";
+import getDailyNotesPlugin from "./get_daily_notes_plugin";
+import getDailyNotesPluginSettings from "./get_daily_notes_plugin_settings";
 
 export default async function getDailyNotesTemplateAsync(app: App) {
     // We have to cast App as any because the TS type doesn't have access to the App's plugin system
-    const plugins = (app as any).internalPlugins;
-    const dailyNotesPlugin = plugins.getPluginById('daily-notes');
+    const dailyNotesPlugin = getDailyNotesPlugin(app);
     if(!dailyNotesPlugin?.enabled) {
         return null;
     }
 
-    const dailyNotesPluginSettings = dailyNotesPlugin.instance.options;
+    const dailyNotesPluginSettings = getDailyNotesPluginSettings(dailyNotesPlugin);
     const dailyNoteTemplatePath = dailyNotesPluginSettings.template;
     if(!dailyNoteTemplatePath) {
         return null;
