@@ -2,7 +2,7 @@ import ChroniclePlugin from "@src/main";
 import { App, Modal, Notice, PluginSettingTab, Setting } from "obsidian";
 import AddNewCalendarModal from "../modals/add_new_calendar/add_new_calendar_modal";
 import deleteCalendarWithId from "./delete_calendar_with_id";
-import { ChronicleCalendar, ChronicleFullCalendar } from "@src/calendars/chronicle_calendar";
+import { ChronicleCalendar, ChronicleDailyCalendar, ChronicleFullCalendar } from "@src/calendars/chronicle_calendar";
 
 export default class ChronicleSettingsTab extends PluginSettingTab {
 
@@ -68,11 +68,17 @@ export default class ChronicleSettingsTab extends PluginSettingTab {
         );
 
         // Calendar note directory
-        setting.addText(comp => comp
-            .setPlaceholder('Note directory')
-            .setValue((calendar as ChronicleFullCalendar).directory)
-            .setDisabled(true)
-        );
+        setting.addText(comp => {
+            comp.setDisabled(true);
+            switch(calendar.type) {
+                case 'full':
+                    comp.setValue((calendar as ChronicleFullCalendar).directory);
+                    break;
+                case 'daily':
+                    comp.setValue((calendar as ChronicleDailyCalendar).header);
+                    break;
+            }
+        });
 
         // Calendar event colour
         setting.addColorPicker(comp => comp
