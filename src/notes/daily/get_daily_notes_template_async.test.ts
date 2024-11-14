@@ -1,4 +1,4 @@
-import { App, TFile } from "obsidian";
+import { App } from "obsidian";
 import getDailyNotesTemplateAsync from "./get_daily_notes_template_async";
 import { Plugin, Plugins } from "@src/__mocks__/obsidian";
 

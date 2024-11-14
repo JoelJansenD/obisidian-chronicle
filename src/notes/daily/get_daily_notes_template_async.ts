@@ -1,5 +1,5 @@
 import { App } from "obsidian";
-import readFileAsync from "./read_file_async";
+import readFileAsync from "../read_file_async";
 
 export default async function getDailyNotesTemplateAsync(app: App) {
     // We have to cast App as any because the TS type doesn't have access to the App's plugin system
