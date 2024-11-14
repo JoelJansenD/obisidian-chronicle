@@ -1,8 +1,8 @@
 import ChroniclePlugin from "@src/main";
 import { App, Modal, Notice, PluginSettingTab, Setting } from "obsidian";
-import { CalendarType, ChronicleCalendar } from "./chronicle_settings";
 import AddNewCalendarModal from "../modals/add_new_calendar/add_new_calendar_modal";
 import deleteCalendarWithId from "./delete_calendar_with_id";
+import { ChronicleCalendar, ChronicleFullCalendar } from "@src/calendars/chronicle_calendar";
 
 export default class ChronicleSettingsTab extends PluginSettingTab {
 
@@ -70,7 +70,7 @@ export default class ChronicleSettingsTab extends PluginSettingTab {
         // Calendar note directory
         setting.addText(comp => comp
             .setPlaceholder('Note directory')
-            .setValue(calendar.directory)
+            .setValue((calendar as ChronicleFullCalendar).directory)
             .setDisabled(true)
         );
 
@@ -90,7 +90,7 @@ export default class ChronicleSettingsTab extends PluginSettingTab {
 
     private onDeleteCalendar(calendar: ChronicleCalendar) {
         const confirmationModal = new Modal(this.app);
-        confirmationModal.setTitle(`Delete calendar ${ calendar.name || calendar.directory }`);
+        confirmationModal.setTitle(`Delete calendar ${ calendar.name || (calendar as ChronicleFullCalendar).directory }`);
         confirmationModal.setContent('Are you sure you want to delete this calendar? Once your changes have been saved, they cannot be reverted!');
         new Setting(confirmationModal.contentEl)
             .addButton(btn => btn

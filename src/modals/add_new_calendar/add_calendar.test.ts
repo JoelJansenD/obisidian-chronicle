@@ -1,6 +1,7 @@
 import DEFAULT_SETTINGS from "@src/settings/default_settings";
-import { ChronicleCalendar, ChronicleSettings } from "@src/settings/chronicle_settings";
+import { ChronicleSettings } from "@src/settings/chronicle_settings";
 import addCalendar from "./add_calendar";
+import { ChronicleFullCalendar } from "@src/calendars/chronicle_calendar";
 
 describe('addCalendar', () => {
 
@@ -13,7 +14,7 @@ describe('addCalendar', () => {
 
     it('stores a valid calendar in the given settings object', () => {
         // Arrange
-        const newCalendar: ChronicleCalendar = { 
+        const newCalendar: ChronicleFullCalendar = { 
             id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 
             name: 'calendar', 
             colour: '#ffffff', 
@@ -21,15 +22,18 @@ describe('addCalendar', () => {
             type: 'full'
         };
 
-        // Act & Assert
-        expect(addCalendar(settings, newCalendar)).toBeFalsy();
+        // Act
+        const result = addCalendar(settings, newCalendar);
+
+        // Assert
+        expect(result).not.toBeNull();
         expect(settings.calendars).toHaveLength(1);
-        expect(settings.calendars[0]).toBe(newCalendar);
+        expect(settings.calendars[0]).toBe(result);
     });
     
     it('returns all validation problems when given an invalid object', () => {
         // Arrange
-        const newCalendar: ChronicleCalendar = { 
+        const newCalendar: ChronicleFullCalendar = { 
             id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 
             name: 'calendar', 
             colour: '#ffffff', 
@@ -37,12 +41,8 @@ describe('addCalendar', () => {
             type: 'full'
         };
 
-        // Act 
-        const result = addCalendar(settings, newCalendar);
-
-        // Assert
-        expect(result).toHaveLength(1);
-        expect(result![0]).toBe('You must select a directory to store notes');
+        // Act & Assert 
+        expect(() => addCalendar(settings, newCalendar)).toThrow('Directory must have a value for full calendars');
         expect(settings.calendars).toHaveLength(0);
     });
 });

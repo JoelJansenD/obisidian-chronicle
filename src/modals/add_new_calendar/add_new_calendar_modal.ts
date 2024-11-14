@@ -1,9 +1,9 @@
 import { App, Modal, Setting } from "obsidian";
-import { CalendarType, ChronicleCalendar } from "../../settings/chronicle_settings";
 import { Guid } from "guid-typescript";
 import ChroniclePlugin from "@src/main";
-import addCalendar from "./add_calendar";
+import addCalendar, { CreateCalendarDto } from "./add_calendar";
 import getFoldersExcludingPaths from "@src/notes/get_folders_excluding_paths";
+import { ChronicleCalendar, ChronicleCalendarType, ChronicleFullCalendar } from "@src/calendars/chronicle_calendar";
 
 export default class AddNewCalendarModal extends Modal {
 
@@ -14,7 +14,7 @@ export default class AddNewCalendarModal extends Modal {
     private name: string;
     private directory: string;
     private colour: string = '#d2122e';
-    private type: CalendarType;
+    private type: ChronicleCalendarType;
 
     constructor(app: App, plugin: ChroniclePlugin, onSubmit: (result: ChronicleCalendar) => void) {
         super(app);
@@ -38,7 +38,7 @@ export default class AddNewCalendarModal extends Modal {
         new Setting(this.contentEl)
             .setName('Type')
             .addDropdown(dropdown => {
-                const options: { [key in CalendarType]: string } = {
+                const options: { [key in ChronicleCalendarType]: string } = {
                     'full': 'Full Calendar',
                     'daily': 'Daily Calendar',
                 };
@@ -46,7 +46,7 @@ export default class AddNewCalendarModal extends Modal {
                 dropdown
                     .addOption('', 'Select a type') // This option will be hidden later, so it serves as a placeholder
                     .addOptions(options)
-                    .onChange((val: CalendarType) => this.type = val);
+                    .onChange((val: ChronicleCalendarType) => this.type = val);
 
                 // Hide the placeholder option, telling users that they need to select a value
                 const selectEl = dropdown.selectEl;
@@ -63,7 +63,7 @@ export default class AddNewCalendarModal extends Modal {
     }
 
     private buildDirectorySelectorField() {
-        const claimedFolders = this._plugin.settings.calendars.map(x => x.directory);
+        const claimedFolders = this._plugin.settings.calendars.filter(x => x.type === 'full').map((x: ChronicleFullCalendar) => x.directory);
         const unclaimedFolders = getFoldersExcludingPaths(this.app.vault, claimedFolders);
         const options = Object.fromEntries(unclaimedFolders.map(x => [x.path, x.path]));
 
@@ -113,24 +113,27 @@ export default class AddNewCalendarModal extends Modal {
     }
 
     private onSubmissionClick() {
-        const newCalendar: ChronicleCalendar = { 
+        const createCalendarDto: CreateCalendarDto = { 
             id: Guid.raw(), 
             name: this.name, 
             directory: this.directory, 
             colour: this.colour,
             type: this.type
         };
-        const validationResult = addCalendar(this._plugin.settings, newCalendar);
-        if(validationResult && validationResult.length > 0) {
-            // Display all validation errors in a new dialog
-            const modal = new Modal(this._app).setContent(validationResult.join('\r\n'));
+
+        let calendar: ChronicleCalendar;
+        try {
+            calendar = addCalendar(this._plugin.settings, createCalendarDto);
+        }
+        catch(e) {
+            const modal = new Modal(this._app).setContent(e);
             new Setting(modal.contentEl).addButton(btn => btn.setButtonText('Close').setWarning().onClick(() => modal.close));
             modal.open();
             return;
         }
 
         // The result can be submitted once it has passed validation
-        this._onSubmit(newCalendar);
+        this._onSubmit(calendar);
         this.close();
     }
 }

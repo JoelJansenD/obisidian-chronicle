@@ -1,6 +1,7 @@
 import DEFAULT_SETTINGS from "./default_settings";
 import deleteCalendarWithId from "./delete_calendar_with_id";
 import { ChronicleSettings } from "./chronicle_settings";
+import { ChronicleFullCalendar } from "@src/calendars/chronicle_calendar";
 
 describe('deleteCalendarWithId', () => {
 
@@ -9,8 +10,8 @@ describe('deleteCalendarWithId', () => {
         settings = { 
             ...DEFAULT_SETTINGS, 
             calendars: [ 
-                { id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', name: 'calendar', colour: '#ffffff', directory: 'test', type: 'full' },
-                { id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', name: 'calendar2', colour: '#ffffff', directory: 'test2', type: 'full' },
+                { id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', name: 'calendar', colour: '#ffffff', directory: 'test', type: 'full' } as ChronicleFullCalendar,
+                { id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', name: 'calendar2', colour: '#ffffff', directory: 'test2', type: 'full' } as ChronicleFullCalendar,
             ]
         };
     });

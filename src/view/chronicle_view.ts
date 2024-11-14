@@ -8,6 +8,7 @@ import { createEvent } from "@src/events/events";
 import { getCalendarById } from "@src/calendars/get_calendar_by_id";
 import queryFilesAsync, { QueryFilesInput } from "@src/notes/query_files_async";
 import getNotesBetweenDatesQuery from "@src/queries/get_notes_between_dates_query";
+import { ChronicleFullCalendar } from "@src/calendars/chronicle_calendar";
 
 export const CHRONICLE_VIEW_TYPE = 'obsidia-chronicle-view';
 export default class ChronicleView extends ItemView {
@@ -92,7 +93,7 @@ export default class ChronicleView extends ItemView {
     start: ${ args.start.toISOString() }
     end: ${args.end.toISOString() }
     ---`;
-                    await this.app.vault.create(`${result.calendar.directory}/${result.title}.md`, content);
+                    await this.app.vault.create(`${(result.calendar as ChronicleFullCalendar).directory}/${result.title}.md`, content);
                     return true;
                 }
             });

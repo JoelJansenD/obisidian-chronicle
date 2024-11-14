@@ -1,8 +1,9 @@
 import ChroniclePlugin from "../main";
-import { App, PluginManifest } from "obsidian";
+import { App } from "obsidian";
 import TestManifest from '../__mocks__/test_manifest';
 import loadSettingsAsync from "./load_settings_async";
 import DEFAULT_SETTINGS from "./default_settings";
+import { ChronicleFullCalendar } from "@src/calendars/chronicle_calendar";
 import { ChronicleSettings } from "./chronicle_settings";
 
 describe('loadSettingsAsync', () => {
@@ -23,7 +24,7 @@ describe('loadSettingsAsync', () => {
         // Arrange
         const mockInput = new MockInput();
         mockInput.settings = {
-            calendars: [ { id: 'aaaaaaaa-aaaa-aaaa-aaaaaaaaaaaa', name: 'test', colour: '#ffffff', directory: '', type: 'full' } ]
+            calendars: [ { id: 'aaaaaaaa-aaaa-aaaa-aaaaaaaaaaaa', name: 'test', colour: '#ffffff', directory: '', type: 'full' } as ChronicleFullCalendar ]
         };
         const mocks = new Mocks(mockInput);
 

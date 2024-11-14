@@ -1,6 +1,6 @@
+import { ChronicleCalendar, ChronicleFullCalendar } from "@src/calendars/chronicle_calendar";
 import ChroniclePlugin from "@src/main";
-import { ChronicleCalendar } from "@src/settings/chronicle_settings";
-import { App, IconName, Modal, Notice, setIcon, Setting } from "obsidian";
+import { App, Modal, setIcon, Setting } from "obsidian";
 
 export type NewTaskModalResult = {
     title: string;
@@ -57,7 +57,9 @@ export default class NewEventModal extends Modal {
 
     private buildCalendarSelection() {
         const options: Record<string,string> = {};
-        this._plugin.settings.calendars.forEach(calendar => {
+        this._plugin.settings.calendars
+        .filter(calendar => calendar.type === 'full')
+        .forEach((calendar: ChronicleFullCalendar) => {
             options[calendar.id] = calendar.name || calendar.directory
         });
 
