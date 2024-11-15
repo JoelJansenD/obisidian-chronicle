@@ -4,5 +4,9 @@ export default interface DailyNotesPlugin {
 }
 
 export interface DailyNotes {
-    options: { [key: string]: string };
+    options: {
+        folder: string,
+        format: string,
+        template: string,
+    };
 }
