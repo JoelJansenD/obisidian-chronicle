@@ -1,4 +1,4 @@
-import { ChronicleCalendar, ChronicleSettings } from "./chronicle_settings";
+import { ChronicleSettings } from "./chronicle_settings";
 
 export default function deleteCalendarWithId(settings: ChronicleSettings, id: string) {
     const calendarIdx = settings.calendars.findIndex(c => c.id === id);

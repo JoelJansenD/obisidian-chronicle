@@ -1,13 +1,13 @@
 import ChroniclePlugin from "@src/main";
 import { App, Modal, Notice, PluginSettingTab, Setting } from "obsidian";
-import { ChronicleCalendar } from "./chronicle_settings";
 import AddNewCalendarModal from "../modals/add_new_calendar/add_new_calendar_modal";
 import deleteCalendarWithId from "./delete_calendar_with_id";
+import { ChronicleCalendar, ChronicleDailyCalendar, ChronicleFullCalendar } from "@src/calendars/chronicle_calendar";
 
 export default class ChronicleSettingsTab extends PluginSettingTab {
 
     private readonly _plugin: ChroniclePlugin;
-    
+
     constructor(app: App, plugin: ChroniclePlugin) {
         super(app, plugin);
         this._plugin = plugin;
@@ -32,10 +32,6 @@ export default class ChronicleSettingsTab extends PluginSettingTab {
         new Setting(containerEl)
             .setName('Calendars')
             .setDesc('Add calendar')
-            // Re-enable the dropdown when multiple calendar implementations are available
-            // .addDropdown(cb => cb
-            //     .addOption('1', 'Option 1')
-            //     .addOption('2', 'Option 2'))
             .addButton(cb => cb
                 .setIcon('plus')
                 .onClick(_ => new AddNewCalendarModal(this.app, this._plugin, r => this.onAddCalendar(r)).open()));
@@ -72,11 +68,17 @@ export default class ChronicleSettingsTab extends PluginSettingTab {
         );
 
         // Calendar note directory
-        setting.addText(comp => comp
-            .setPlaceholder('Note directory')
-            .setValue(calendar.directory)
-            .setDisabled(true)
-        );
+        setting.addText(comp => {
+            comp.setDisabled(true);
+            switch(calendar.type) {
+                case 'full':
+                    comp.setValue((calendar as ChronicleFullCalendar).directory);
+                    break;
+                case 'daily':
+                    comp.setValue((calendar as ChronicleDailyCalendar).header);
+                    break;
+            }
+        });
 
         // Calendar event colour
         setting.addColorPicker(comp => comp
@@ -94,7 +96,7 @@ export default class ChronicleSettingsTab extends PluginSettingTab {
 
     private onDeleteCalendar(calendar: ChronicleCalendar) {
         const confirmationModal = new Modal(this.app);
-        confirmationModal.setTitle(`Delete calendar ${ calendar.name || calendar.directory }`);
+        confirmationModal.setTitle(`Delete calendar ${ this.getCalendarLabel(calendar) }`);
         confirmationModal.setContent('Are you sure you want to delete this calendar? Once your changes have been saved, they cannot be reverted!');
         new Setting(confirmationModal.contentEl)
             .addButton(btn => btn
@@ -115,6 +117,19 @@ export default class ChronicleSettingsTab extends PluginSettingTab {
                 })
             );
         confirmationModal.open();
+    }
+
+    private getCalendarLabel(calendar: ChronicleCalendar) {
+        switch(calendar.type) {
+            case 'full':
+                const fullCalendar = calendar as ChronicleFullCalendar;
+                return fullCalendar.name || fullCalendar.directory;
+            case 'daily':
+                const dailyCalendar = calendar as ChronicleDailyCalendar;
+                return dailyCalendar.name || dailyCalendar.header;
+            default:
+                throw `Calendar type '${calendar.type}' is not supported`;
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 export class App {
-    vault = new Vault();
+    internalPlugins = new Plugins();
     metadataCache = new MetadataCache();
+    vault = new Vault();
 }
 
 export class CachedMetadata {
@@ -30,7 +31,16 @@ export class TFolder {
 }
 
 export class Plugin {
+    enabled = true;
     loadData = jest.fn();
+    instance = {
+        options: {} as { [key:string]: string | undefined }
+    }
+}
+
+export class Plugins {
+    plugins: {[key: string]: Plugin};
+    getPluginById = jest.fn();
 }
 
 export class PluginSettingTab {
@@ -38,8 +48,10 @@ export class PluginSettingTab {
 }
 
 export class Vault {
+    create = jest.fn();
     getAllFolders = jest.fn();
     getMarkdownFiles = jest.fn();
+    getFileByPath = jest.fn();
     getFiles = jest.fn();
     read = jest.fn();
     writeFile = jest.fn();

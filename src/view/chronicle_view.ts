@@ -1,13 +1,16 @@
 import { ItemView, Notice, WorkspaceLeaf } from "obsidian";
 import { renderCalendar } from './calendar';
 import { Calendar, DateSelectArg, DatesSetArg, EventApi, EventClickArg, EventHoveringArg, EventInput } from "@fullcalendar/core";
-import NewEventModal from "./new_event_modal";
+import NewEventModal, { NewTaskModalResult } from "./new_event_modal";
 import ChroniclePlugin from "@src/main";
 import { replaceLastOccurance } from "@src/utils/string_utils";
 import { createEvent } from "@src/events/events";
 import { getCalendarById } from "@src/calendars/get_calendar_by_id";
 import queryFilesAsync, { QueryFilesInput } from "@src/notes/query_files_async";
 import getNotesBetweenDatesQuery from "@src/queries/get_notes_between_dates_query";
+import { ChronicleFullCalendar } from "@src/calendars/chronicle_calendar";
+import createNoteForEventAsync from "@src/events/create_note_for_event_async";
+import getDailyNotesInTimespan from "@src/notes/daily/get_daily_notes_in_timespan";
 
 export const CHRONICLE_VIEW_TYPE = 'obsidia-chronicle-view';
 export default class ChronicleView extends ItemView {
@@ -61,6 +64,24 @@ export default class ChronicleView extends ItemView {
         return false;
     }
 
+    async onDateSavedAsync(result: NewTaskModalResult, args: DateSelectArg) {
+        if(!result.title) {
+            return false;
+        }
+
+        const event: EventInput = {
+            title: result.title,
+            start: args.start,
+            end: args.end,
+            allDay: args.allDay,
+            backgroundColor: result.calendar.colour,
+            borderColor: result.calendar.colour
+        };
+        createEvent(args.view.calendar, event);
+        await createNoteForEventAsync(this.app, result.calendar, result.title, { start: args.start, end: args.end });
+        return true;
+    }
+
     async openContextMenuForEvent(e: EventApi, mouseEvent: MouseEvent) {
         console.log('openContextMenuForEvent')
         console.log(e)
@@ -72,29 +93,7 @@ export default class ChronicleView extends ItemView {
             const modal = new NewEventModal(this.app, this._plugin, { 
                 start: args.start, 
                 end: args.end,
-                onSaveAsync: async (result) => {
-                    if(!result.title) {
-                        return false;
-                    }
-
-                    const event: EventInput = {
-                        title: result.title,
-                        start: args.start,
-                        end: args.end,
-                        allDay: args.allDay,
-                        backgroundColor: result.calendar.colour,
-                        borderColor: result.calendar.colour
-                    };
-                    createEvent(args.view.calendar, event);
-
-                    let content = `---
-    calendarId: ${ result.calendar.id }
-    start: ${ args.start.toISOString() }
-    end: ${args.end.toISOString() }
-    ---`;
-                    await this.app.vault.create(`${result.calendar.directory}/${result.title}.md`, content);
-                    return true;
-                }
+                onSaveAsync: async (result) => await this.onDateSavedAsync(result, args)
             });
             modal.open();
         }
@@ -126,6 +125,8 @@ export default class ChronicleView extends ItemView {
     async onOpen() {
         const container = this.containerEl.children[1];
         container.empty();
+
+        console.log(getDailyNotesInTimespan(this.app, { start: new Date(2024, 10, 1) }));
 
         const containerElement = container.createDiv();
 
