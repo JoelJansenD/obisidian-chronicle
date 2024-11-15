@@ -13,9 +13,9 @@ export default function getDailyNotesInTimespan(app: App, dates: {start?: Date, 
         return null;
     }
 
-    const settings = dailyNotesPlugin?.instance.options;
+    const settings = dailyNotesPlugin.instance.options;
     // An empty settings.folder string is considered the same location as /, files in this directory have a parent path of /
-    const dailyNotesFolder = settings.folder !== '' ? settings.folder : '/';
+    const dailyNotesFolder = !settings.folder ? '/' : settings.folder;
     // YYYY-MM-DD is Obsidian's default, if no specific format is configured the settings.format is undefined
     const dateFormat = settings.format || 'YYYY-MM-DD';
 
@@ -44,7 +44,7 @@ function checkFileInRange(
     }
 
     let parsedDate = moment(file.basename, dateFormat, true);
-    if(!parsedDate.isValid) {
+    if(!parsedDate.isValid()) {
         return false;
     }
 
@@ -55,9 +55,9 @@ function checkFileInRange(
 
     // There is a startMoment, so we know there is no endMoment, so we check if the date lies after startMoment
     if (startMoment) {
-        return parsedDate.isAfter(startMoment);
+        return parsedDate.isSameOrAfter(startMoment, 'day');
     }
 
     // There is no startMoment, but we know there is an endMoment, so we check if the date lies before endMoment
-    return parsedDate.isBefore(endMoment);
+    return parsedDate.isSameOrBefore(endMoment, 'day');
 }

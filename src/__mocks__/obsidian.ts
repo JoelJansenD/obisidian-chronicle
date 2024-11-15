@@ -34,7 +34,7 @@ export class Plugin {
     enabled = true;
     loadData = jest.fn();
     instance = {
-        options: { }
+        options: {} as { [key:string]: string | undefined }
     }
 }
 
