@@ -8,7 +8,7 @@ export default function addCalendar(settings: ChronicleSettings, newCalendar: Cr
 }
 
 function createCalendar(newCalendar: CreateCalendarDto) : ChronicleCalendar {
-        switch(newCalendar.type) {
+    switch(newCalendar.type) {
         case "full":
             return createFullCalendar(newCalendar);
         case "daily":
@@ -39,7 +39,7 @@ function createDailyCalendar(newCalendar: CreateCalendarDto) {
         header: newCalendar.header!,
         type: 'daily'
     };
-    
+
     return calendar;
 }
 

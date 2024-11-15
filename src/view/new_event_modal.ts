@@ -1,4 +1,4 @@
-import { ChronicleCalendar, ChronicleFullCalendar } from "@src/calendars/chronicle_calendar";
+import { ChronicleCalendar, ChronicleDailyCalendar, ChronicleFullCalendar } from "@src/calendars/chronicle_calendar";
 import ChroniclePlugin from "@src/main";
 import { App, Modal, setIcon, Setting } from "obsidian";
 
@@ -56,13 +56,7 @@ export default class NewEventModal extends Modal {
     }
 
     private buildCalendarSelection() {
-        const options: Record<string,string> = {};
-        this._plugin.settings.calendars
-        .filter(calendar => calendar.type === 'full')
-        .forEach((calendar: ChronicleFullCalendar) => {
-            options[calendar.id] = calendar.name || calendar.directory
-        });
-
+        const options = this.getCalendarList();
         new Setting(this.contentEl)
             .setName('Calendar')
             .addDropdown(dropdown => dropdown
@@ -117,5 +111,28 @@ export default class NewEventModal extends Modal {
             return `${getDateTimeString(startWeekday, startDate, startTime)} – ${endTime}`;
         }
         return `${getDateTimeString(startWeekday, startDate, startTime)} – ${getDateTimeString(endWeekday, endDate, endTime)}`;
+    }
+
+    private getCalendarList() {
+        const calendars = this._plugin.settings.calendars;
+        const options = Object.fromEntries(calendars.map(x => {
+            switch(x.type) {
+                case "full":
+                    return this.getFullCalendarOption(x as ChronicleFullCalendar);
+                case "daily":
+                    return this.getDailyCalendarOption(x as ChronicleDailyCalendar);
+                default:
+                    throw `Calendar type '${x.type}' is not supported`;
+            }
+        }));
+        return options;
+    }
+
+    private getDailyCalendarOption(calendar: ChronicleDailyCalendar) {
+        return [ calendar.id, calendar.name || calendar.header ];
+    }
+
+    private getFullCalendarOption(calendar: ChronicleFullCalendar) {
+        return [ calendar.id, calendar.name || calendar.directory ];
     }
 }
