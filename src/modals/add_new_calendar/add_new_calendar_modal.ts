@@ -4,6 +4,10 @@ import ChroniclePlugin from "@src/main";
 import addCalendar, { CreateCalendarDto } from "./add_calendar";
 import getFoldersExcludingPaths from "@src/notes/get_folders_excluding_paths";
 import { ChronicleCalendar, ChronicleCalendarType, ChronicleFullCalendar } from "@src/calendars/chronicle_calendar";
+import getDailyNotesTemplateAsync from "@src/notes/daily/get_daily_notes_template_async";
+import findHeadings from "@src/notes/find_headings";
+import { remark } from "remark";
+
 
 export default class AddNewCalendarModal extends Modal {
 
@@ -13,6 +17,7 @@ export default class AddNewCalendarModal extends Modal {
 
     private name: string;
     private directory: string;
+    private header: string;
     private colour: string = '#d2122e';
     private type: ChronicleCalendarType;
 
@@ -22,14 +27,16 @@ export default class AddNewCalendarModal extends Modal {
         this._plugin = plugin;
         this._onSubmit = onSubmit;
         
-        this.render();
+        this.renderAsync();
     }
 
-    private render() {
+    private async renderAsync() {
+        this.contentEl.empty();
+
         this.setTitle('New Calendar');
         this.buildNameField();
         this.buildCalendarTypeSelectorField();
-        this.buildTypeSpecificFields();
+        await this.buildTypeSpecificFieldsAsync();
         this.buildColourPicker();
         this.buildSubmissionRow();
     }
@@ -46,7 +53,11 @@ export default class AddNewCalendarModal extends Modal {
                 dropdown
                     .addOption('', 'Select a type') // This option will be hidden later, so it serves as a placeholder
                     .addOptions(options)
-                    .onChange((val: ChronicleCalendarType) => this.type = val);
+                    .setValue(this.type || '')
+                    .onChange((val: ChronicleCalendarType) => {
+                        this.type = val;
+                        this.renderAsync();
+                    });
 
                 // Hide the placeholder option, telling users that they need to select a value
                 const selectEl = dropdown.selectEl;
@@ -74,6 +85,7 @@ export default class AddNewCalendarModal extends Modal {
                 dropdown
                     .addOption('', 'Select a directory') // This option will be hidden later, so it serves as a placeholder
                     .addOptions(options)
+                    .setValue(this.directory || '')
                     .onChange(val => this.directory = val);
 
                 // Hide the placeholder option, telling users that they need to select a value
@@ -82,14 +94,39 @@ export default class AddNewCalendarModal extends Modal {
             });
     }
 
-    private buildHeaderSelectorField() {
+    private async buildHeaderSelectorFieldAsync() {
+        const dailyNoteTemplate = await getDailyNotesTemplateAsync(this.app);
+        if(!dailyNoteTemplate) {
+            // TODO #9: Display warning
+            return;
+        }
+        
+        const dailyNoteHeaders = findHeadings(remark.parse(dailyNoteTemplate));
+        
+        const dailyNoteHeaderOptions = Object.fromEntries(dailyNoteHeaders.map(h => {
+            const header = `${'#'.repeat(h.depth)} ${h.text}`;
+            return [header, header];
+        }));
+        new Setting(this.contentEl)
+            .setName('Section')
+            .setDesc('Heading under which the events will be added')
+            .addDropdown(dropdown => {
+                dropdown
+                    .addOption('', 'Select a heading') // This option will be hidden later, so it serves as a placeholder
+                    .addOptions(dailyNoteHeaderOptions)
+                    .setValue(this.header)
+                    .onChange(val => this.header = val);
 
+                const selectEl = dropdown.selectEl;
+                selectEl.querySelector('option[value=""]')?.setAttrs({ 'disabled': true, 'hidden': true });
+            });
     }
 
     private buildNameField() {
         new Setting(this.contentEl)
             .setName('Name')
             .addText(text => text
+                .setValue(this.name)
                 .onChange(val => this.name = val));
     }
 
@@ -98,16 +135,16 @@ export default class AddNewCalendarModal extends Modal {
             .addButton(btn => btn
                 .setButtonText('Add new calendar')
                 .setCta()
-                .onClick(this.onSubmissionClick));
+                .onClick(() => this.onSubmissionClick()));
     }
     
-    private buildTypeSpecificFields() {
+    private async buildTypeSpecificFieldsAsync() {
         switch(this.type) {
             case "full":
                 this.buildDirectorySelectorField();
                 break;
             case "daily":
-                this.buildHeaderSelectorField();
+                await this.buildHeaderSelectorFieldAsync();
                 break;
         }
     }
@@ -116,7 +153,8 @@ export default class AddNewCalendarModal extends Modal {
         const createCalendarDto: CreateCalendarDto = { 
             id: Guid.raw(), 
             name: this.name, 
-            directory: this.directory, 
+            directory: this.directory,
+            header: this.header,
             colour: this.colour,
             type: this.type
         };

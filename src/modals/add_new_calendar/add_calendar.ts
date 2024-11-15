@@ -39,8 +39,8 @@ function createDailyCalendar(newCalendar: CreateCalendarDto) {
         header: newCalendar.header!,
         type: 'daily'
     };
+    
     return calendar;
-
 }
 
 function createFullCalendar( newCalendar: CreateCalendarDto) {
