@@ -1,7 +1,6 @@
 import { App, TFile } from "obsidian";
 import getDailyNotesPlugin from "./get_daily_notes_plugin";
-import * as moment from "moment";
-import { Moment } from "moment";
+import moment from "moment";
 
 export default async function getDailyNotesInTimespanAsync(app: App, dates: {start?: Date, end?: Date}) {
     if(!dates.start && !dates.end) {
@@ -14,8 +13,10 @@ export default async function getDailyNotesInTimespanAsync(app: App, dates: {sta
     }
 
     const settings = dailyNotesPlugin?.instance.options;
-    const dailyNotesFolder = settings.folder;
-    const dateFormat = settings.format;
+    // An empty settings.folder string is considered the same location as /, files in this directory have a parent path of /
+    const dailyNotesFolder = settings.folder !== '' ? settings.folder : '/';
+    // YYYY-MM-DD is Obsidian's default, if no specific format is configured the settings.format is undefined
+    const dateFormat = settings.format || 'YYYY-MM-DD';
 
     const startMoment = convertToMoment(dates.start);
     const endMoment = convertToMoment(dates.end);
@@ -34,18 +35,15 @@ function checkFileInRange(
     file: TFile,
     dailyNotesFolder: string,
     dateFormat: string,
-    startMoment?: Moment,
-    endMoment?: Moment): boolean {
+    startMoment?: moment.Moment,
+    endMoment?: moment.Moment): boolean {
 
-    if (!file.path.startsWith(dailyNotesFolder)) {
+    if (file.parent?.path !== dailyNotesFolder) {
         return false;
     }
 
-    let parsedDate: Moment;
-    try {
-        parsedDate = moment(file.name, dateFormat, true);
-    }
-    catch {
+    let parsedDate = moment(file.basename, dateFormat, true);
+    if(!parsedDate.isValid) {
         return false;
     }
 

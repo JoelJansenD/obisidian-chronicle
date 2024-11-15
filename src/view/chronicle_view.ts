@@ -10,6 +10,7 @@ import queryFilesAsync, { QueryFilesInput } from "@src/notes/query_files_async";
 import getNotesBetweenDatesQuery from "@src/queries/get_notes_between_dates_query";
 import { ChronicleFullCalendar } from "@src/calendars/chronicle_calendar";
 import createNoteForEventAsync from "@src/events/create_note_for_event_async";
+import getDailyNotesInTimespanAsync from "@src/notes/daily/get_daily_notes_in_timespan";
 
 export const CHRONICLE_VIEW_TYPE = 'obsidia-chronicle-view';
 export default class ChronicleView extends ItemView {
@@ -124,6 +125,8 @@ export default class ChronicleView extends ItemView {
     async onOpen() {
         const container = this.containerEl.children[1];
         container.empty();
+
+        console.log(await getDailyNotesInTimespanAsync(this.app, { start: new Date(2024, 10, 1) }));
 
         const containerElement = container.createDiv();
 
