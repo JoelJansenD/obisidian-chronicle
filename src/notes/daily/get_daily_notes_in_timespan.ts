@@ -1,8 +1,9 @@
 import { App, TFile } from "obsidian";
 import getDailyNotesPlugin from "./get_daily_notes_plugin";
-import moment from "moment";
+// This is a hack because jest refuses to work correctly with default import notation
+const moment = require('moment').default || require('moment');
 
-export default async function getDailyNotesInTimespanAsync(app: App, dates: {start?: Date, end?: Date}) {
+export default function getDailyNotesInTimespan(app: App, dates: {start?: Date, end?: Date}) {
     if(!dates.start && !dates.end) {
         throw 'The dates object needs at least one of start or end';
     }
@@ -49,7 +50,7 @@ function checkFileInRange(
 
     // Both dates are specified, so we check if the date lies between them
     if (startMoment && endMoment) {
-        return parsedDate.isBetween(startMoment, endMoment);
+        return parsedDate.isBetween(startMoment, endMoment, 'day', '[]');
     }
 
     // There is a startMoment, so we know there is no endMoment, so we check if the date lies after startMoment
